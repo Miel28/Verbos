@@ -155,6 +155,44 @@ td.hidden::after{content:"ver";position:absolute;left:8px;top:6px;font-family:va
 @media (max-width:820px){.fc{grid-template-columns:1fr}}
 @media (prefers-reduced-motion: reduce){.card{transition:none}}
 
+/* Reto del día */
+.reto{max-width:720px;margin:20px auto 0;display:flex;flex-direction:column;gap:16px}
+.rbox{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px 24px;display:flex;flex-direction:column;gap:14px}
+.streak{display:flex;align-items:center;gap:16px}
+.streak svg{flex:none}
+.streak b{font-family:var(--f-display);font-size:2.6rem;line-height:1;font-variant-numeric:tabular-nums}
+.streak p{margin:0;color:var(--muted)}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center}
+.week div{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:.78rem;color:var(--muted)}
+.week i{display:block;width:30px;height:30px;border-radius:50%;background:var(--hide);border:2px solid transparent}
+.week i.ok{background:var(--c-aba);border-color:var(--c-aba)}
+.week i.today{border-color:var(--ink)}
+.big-btn{font:inherit;font-weight:800;font-size:1.15rem;padding:16px 20px;border-radius:14px;border:0;background:var(--ink);color:var(--bg);cursor:pointer}
+.big-btn.alt{background:transparent;color:var(--ink);border:2px solid var(--line)}
+.prog{height:12px;border-radius:6px;background:var(--hide);overflow:hidden}
+.prog i{display:block;height:100%;background:var(--c-aaa);transition:width .3s}
+.qkind{font-family:var(--f-mono);font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.qtext{font-family:var(--f-display);font-size:clamp(1.4rem,4vw,2rem);font-weight:700;line-height:1.2;margin:0}
+.qtext em{font-style:normal;color:var(--c-abb)}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opts button{font:inherit;font-size:1.1rem;font-family:var(--f-mono);font-weight:700;text-align:left;padding:14px 16px;border-radius:12px;border:2px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.opts button.es{font-family:var(--f-body);font-weight:600}
+.opts button:disabled{cursor:default}
+.opts button.right{border-color:var(--c-aaa);background:color-mix(in srgb,var(--c-aaa) 14%,transparent)}
+.opts button.wrong{border-color:var(--c-abc);background:color-mix(in srgb,var(--c-abc) 14%,transparent)}
+.typein{display:flex;gap:10px;flex-wrap:wrap}
+.typein input{flex:1 1 220px;font:inherit;font-family:var(--f-mono);font-size:1.2rem;padding:12px 14px;border-radius:12px;border:2px solid var(--line);background:var(--surface);color:var(--ink)}
+.typein button{font:inherit;font-weight:700;padding:12px 18px;border-radius:12px;border:0;background:var(--ink);color:var(--bg);cursor:pointer}
+.fb{border-radius:14px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.fb.ok{background:color-mix(in srgb,var(--c-aaa) 16%,transparent)}
+.fb.bad{background:color-mix(in srgb,var(--c-abc) 16%,transparent)}
+.fb p{margin:0;font-weight:600}
+.fb button{font:inherit;font-weight:800;padding:12px 18px;border-radius:12px;border:0;background:var(--ink);color:var(--bg);cursor:pointer}
+.score{font-family:var(--f-display);font-size:3rem;font-weight:800;line-height:1}
+.miss{margin:0;padding-left:18px;color:var(--muted)}
+.miss b{color:var(--ink);font-family:var(--f-mono)}
+@media (max-width:560px){.opts{grid-template-columns:1fr}}
+
 @media (max-width:560px){.groups,.groups.wide{grid-template-columns:1fr}}
 </style>
 </head>
@@ -446,6 +484,14 @@ const regAll = REG.reduce((n,s)=>n+s.items.length,0);
 const upAll = UP.reduce((n,g)=>n+g.v.length,0);
 
 const VIEWS = {
+ reto:{
+  tab:"Reto del día", count:"", custom:true,
+  lede:"Diez preguntas al día que mezclan todo lo que estás aprendiendo. Las que fallas vuelven más seguido, también en las tarjetas. No rompas tu racha.",
+  stats:[], modes:[],
+  intro(){ return `<div class="reto" id="reto"></div>`; },
+  init(){ retoHome(); },
+  outro:""
+ },
  irregulares:{
   tab:"Irregulares", count:irrAll,
   lede:"Agrupados por la forma en que cambian, para que aprendas una fórmula y te lleves varios verbos de una vez. Las letras resaltadas son las que cambian respecto al infinitivo. Empieza por las familias de la izquierda: son las más fáciles.",
@@ -524,7 +570,7 @@ const VIEWS = {
   outro:`<div class="note"><h3>Separables o no</h3><p>Muchos admiten el objeto en medio: <code>pick up the box</code> o <code>pick the box up</code>. Si el objeto es un pronombre, va siempre en medio: <code>pick it up</code>, nunca <code>pick up it</code>.</p><p>El verbo se conjuga normal: get up → got up, wake up → woke up, give up → gave up.</p></div>`
  },
  tarjetas:{
-  tab:"Tarjetas", count:"", custom:true,
+  tab:"Tarjetas", count:"", custom:true, init(){ fcInit(); },
   lede:"Mira el frente, piensa la respuesta y toca la tarjeta para voltearla. Si la sabías, la verás menos; si no, vuelve pronto. Tu progreso se guarda solo en este dispositivo.",
   stats:[], modes:[],
   intro(){ return `<div class="fc">
@@ -552,7 +598,7 @@ const VIEWS = {
 
 let view="irregulares", mode="none", query="";
 function setView(v){
-  view = VIEWS[v] ? v : "irregulares"; mode="none"; query=""; document.getElementById("q").value="";
+  view = VIEWS[v] ? v : "reto"; mode="none"; query=""; document.getElementById("q").value="";
   const V=VIEWS[view];
   document.getElementById("lede").textContent=V.lede;
   document.getElementById("stats").innerHTML=V.stats.map(([n,l])=>`<span class="stat"><b>${n}</b>${l}</span>`).join("");
@@ -563,7 +609,7 @@ function setView(v){
   document.getElementById("groups").className="groups"+(V.wide?" wide":"");
   document.querySelector(".controls").style.display = V.custom ? "none" : "";
   document.getElementById("groups").style.display = V.custom ? "none" : "";
-  if (V.custom) { fcInit(); return; }
+  if (V.custom) { V.init(); return; }
   render();
 }
 function render(){
@@ -651,6 +697,113 @@ document.addEventListener("change",e=>{
   if(e.target.id==="fcDeck"){ FC.deck=e.target.value; FC.last=null; fcShow(); }
   if(e.target.id==="fcRev"){ FC.rev=e.target.checked; fcShow(); }
 });
+
+// ---------- Reto del día ----------
+const RETO_N = 10;
+function rload(){ try{ return JSON.parse(localStorage.getItem("verbos-reto")||"{}"); }catch(e){ return {}; } }
+function rsave(s){ try{ localStorage.setItem("verbos-reto", JSON.stringify(s)); }catch(e){} }
+function dkey(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+function today(){ return dkey(new Date()); }
+function daysAgo(n){ const d=new Date(); d.setDate(d.getDate()-n); return dkey(d); }
+function curStreak(s){ // la racha sigue viva si el último día hecho fue hoy o ayer
+  return (s.last===today()||s.last===daysAgo(1)) ? (s.streak||0) : 0;
+}
+const FLAME = `<svg width="56" height="56" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="var(--c-aba)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c4 0 7-3 7-7 0-4-3-6-4-10-2 2-3 4-3 6-1-1-2-2-2-4-3 2-5 5-5 8 0 4 3 7 7 7z" fill="color-mix(in srgb, var(--c-aba) 25%, transparent)"/></svg>`;
+
+function rnd(a){ return a[Math.floor(Math.random()*a.length)]; }
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function weighted(list, idf){
+  const mem=store(); let tot=list.reduce((n,x)=>n+BOXW[mem[idf(x)]||0],0), r=Math.random()*tot;
+  for(const x of list){ r-=BOXW[mem[idf(x)]||0]; if(r<=0) return x; } return list[list.length-1];
+}
+const IRR = G.filter(g=>!FAM[g.fam].extra).flatMap(g=>g.v.map(v=>({i:v[0],p:v[1],pp:v[2],es:v[3],n:v[4]||""})));
+const REGI = REG.flatMap(s=>s.items.map(v=>({...v,snd:s.snd})));
+const UPI = UP.flatMap(g=>g.v.map(v=>({pv:v[0],es:v[1],ex:v[2]})));
+function regularize(i){ return i.endsWith("e")?i+"d":/[^aeiou]y$/.test(i)?i.slice(0,-1)+"ied":i+"ed"; }
+function accepted(main, note){
+  const set=new Set(main.split(" / ").map(s=>s.trim().toLowerCase()));
+  (note.match(/(?:también|US:|UK:)\s*([a-z-]+)/gi)||[]).forEach(m=>set.add(m.split(/\s+/).pop().toLowerCase()));
+  return set;
+}
+function fillOpts(correct, pool){
+  const out=[correct]; for(const x of shuffle(pool)){ if(out.length>=4) break; if(!out.includes(x)) out.push(x); }
+  return shuffle(out);
+}
+const QMAKERS = {
+  past(){ const v=weighted(IRR,x=>"irr:"+x.i);
+    const out=[v.p]; [regularize(v.i), v.pp, v.i, ...shuffle(IRR).map(x=>x.p)].forEach(x=>{ if(out.length<4 && !out.includes(x)) out.push(x); });
+    return {id:"irr:"+v.i, kind:"Irregulares · pasado", q:`¿Cuál es el pasado de <em>${esc(v.i)}</em>?`, opts:shuffle(out), ans:v.p, show:`${v.i} – ${v.p} – ${v.pp}`}; },
+  pp(){ const v=weighted(IRR,x=>"irr:"+x.i);
+    return {id:"irr:"+v.i, kind:"Irregulares · participio", q:`Escribe el participio de <em>${esc(v.i)}</em> <span style="font-weight:400;color:var(--muted)">(${esc(v.es)})</span>`, type:true, ok:accepted(v.pp,v.n), ans:v.pp, show:`${v.i} – ${v.p} – ${v.pp}`}; },
+  rev(){ const v=weighted(IRR,x=>"irr:"+x.i);
+    return {id:"irr:"+v.i, kind:"Vocabulario", q:`¿Cómo se dice <em>${esc(v.es)}</em> en inglés?`, opts:fillOpts(v.i, IRR.map(x=>x.i)), ans:v.i, show:`${v.i} = ${v.es}`}; },
+  up(){ const v=weighted(UPI,x=>"up:"+x.pv+":"+x.es);
+    return {id:"up:"+v.pv+":"+v.es, kind:"Phrasal verbs con up", q:`¿Qué significa <em>${esc(v.pv)}</em>?<br><span style="font-size:1rem;font-weight:400;font-style:italic;color:var(--muted)">${esc(v.ex)}</span>`, opts:fillOpts(v.es, UPI.filter(x=>x.pv!==v.pv).map(x=>x.es)), es:true, ans:v.es, show:`${v.pv} = ${v.es}`}; },
+  snd(){ const v=weighted(REGI,x=>"reg:"+x.inf);
+    return {id:"reg:"+v.inf, kind:"Regulares · pronunciación", q:`¿Cómo suena la -ed en <em>${esc(v.past)}</em>?`, opts:["/t/","/d/","/ɪd/"], ans:v.snd, show:`${v.past} suena con ${v.snd}`}; }
+};
+let R=null;
+function retoHome(){
+  const s=rload(), st=curStreak(s), done=s.last===today();
+  const days=["D","L","M","M","J","V","S"];
+  const week=[6,5,4,3,2,1,0].map(n=>{ const k=daysAgo(n), d=new Date(); d.setDate(d.getDate()-n);
+    return `<div><i class="${(s.days||{})[k]!==undefined?"ok":""}${n===0?" today":""}"></i>${days[d.getDay()]}</div>`; }).join("");
+  document.getElementById("reto").innerHTML=`
+    <div class="rbox"><div class="streak">${FLAME}<div><b>${st}</b><p>${st===1?"día seguido":"días seguidos"} · récord: ${s.best||0}</p></div></div>
+      <div class="week">${week}</div>
+      <p style="margin:0;color:var(--muted)">${done?`Hoy ya hiciste tu reto (${s.days[today()]}/${RETO_N}). Vuelve mañana para seguir la racha.`:(st>0?"Haz el reto de hoy para no perder tu racha.":"Haz tu primer reto y empieza una racha.")}</p>
+      <button type="button" class="big-btn${done?" alt":""}" id="rStart">${done?"Otra ronda para practicar":`Empezar el reto de hoy (${RETO_N} preguntas)`}</button>
+    </div>`;
+}
+function retoStart(){
+  const plan=shuffle(["past","past","past","pp","pp","rev","up","up","snd","snd"]);
+  const qs=[]; const seen=new Set();
+  for(const t of plan){ let q, tries=0; do{ q=QMAKERS[t](); tries++; }while(seen.has(q.id+t) && tries<8); seen.add(q.id+t); qs.push(q); }
+  R={qs, i:0, right:0, miss:[], answered:false};
+  retoQ();
+}
+function retoQ(){
+  const q=R.qs[R.i]; R.answered=false;
+  const body = q.type
+    ? `<form class="typein" id="rForm" autocomplete="off"><label for="rIn" class="sr">Tu respuesta</label><input id="rIn" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Escribe aquí"><button type="submit">Comprobar</button></form>`
+    : `<div class="opts">${q.opts.map(o=>`<button type="button" class="${q.es?"es":""}" data-opt="${esc(o)}">${esc(o)}</button>`).join("")}</div>`;
+  document.getElementById("reto").innerHTML=`
+    <div class="prog" aria-label="Pregunta ${R.i+1} de ${RETO_N}"><i style="width:${R.i/RETO_N*100}%"></i></div>
+    <div class="rbox"><span class="qkind">${esc(q.kind)} · ${R.i+1}/${RETO_N}</span><p class="qtext">${q.q}</p>${body}<div id="rFb"></div></div>`;
+  const inp=document.getElementById("rIn"); if(inp) inp.focus();
+}
+function retoCheck(given, btn){
+  if(R.answered) return; R.answered=true;
+  const q=R.qs[R.i];
+  const ok = q.type ? q.ok.has(given.trim().toLowerCase()) : given===q.ans;
+  const mem=store(); const b=mem[q.id]||0; mem[q.id]= ok?Math.min(5,b+1):1; save(mem);
+  if(ok) R.right++; else R.miss.push(q.show);
+  document.querySelectorAll(".opts button").forEach(x=>{ x.disabled=true; if(x.dataset.opt===q.ans) x.classList.add("right"); });
+  if(btn && !ok) btn.classList.add("wrong");
+  const inp=document.getElementById("rIn"); if(inp) inp.disabled=true;
+  document.getElementById("rFb").innerHTML=`<div class="fb ${ok?"ok":"bad"}"><p>${ok?"¡Correcto!":"Era: "+esc(q.show)}</p><button type="button" id="rNext">${R.i+1<RETO_N?"Continuar":"Ver resultado"}</button></div>`;
+  document.getElementById("rNext").focus();
+}
+function retoEnd(){
+  const s=rload(); const t=today();
+  if(s.last!==t){ s.streak = (s.last===daysAgo(1)) ? (s.streak||0)+1 : 1; s.last=t; }
+  s.days=s.days||{}; s.days[t]=Math.max(s.days[t]||0, R.right); s.best=Math.max(s.best||0, s.streak);
+  rsave(s);
+  const msg = R.right===RETO_N?"¡Perfecto!":R.right>=7?"¡Muy bien!":R.right>=4?"Vas bien, sigue así.":"Mañana te irá mejor: las que fallaste vuelven pronto.";
+  document.getElementById("reto").innerHTML=`
+    <div class="prog"><i style="width:100%"></i></div>
+    <div class="rbox"><span class="score">${R.right}/${RETO_N}</span><p style="margin:0;font-size:1.15rem;font-weight:700">${msg}</p>
+      <div class="streak">${FLAME}<div><b>${s.streak}</b><p>${s.streak===1?"día seguido":"días seguidos"}</p></div></div>
+      ${R.miss.length?`<div><p style="margin:0 0 6px;font-weight:700">Para repasar:</p><ul class="miss">${R.miss.map(m=>`<li><b>${esc(m)}</b></li>`).join("")}</ul></div>`:""}
+      <button type="button" class="big-btn alt" id="rHome">Volver</button></div>`;
+}
+document.addEventListener("click",e=>{
+  if(e.target.closest("#rStart")) return retoStart();
+  const o=e.target.closest("[data-opt]"); if(o && R) return retoCheck(o.dataset.opt, o);
+  if(e.target.closest("#rNext")){ R.i++; return R.i<RETO_N ? retoQ() : retoEnd(); }
+  if(e.target.closest("#rHome")) return retoHome();
+});
+document.addEventListener("submit",e=>{ if(e.target.id==="rForm"){ e.preventDefault(); retoCheck(document.getElementById("rIn").value); } });
 window.addEventListener("hashchange",()=>setView(location.hash.slice(1)));
 setView(location.hash.slice(1));
 </script>
