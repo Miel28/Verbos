@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Verbos">
+<meta name="theme-color" content="#1a1d33">
+<title>Verbos en inglés por patrones</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+/* Plan: tres pestañas (irregulares, regulares, phrasal verbs con up). Cada una abre con un mapa de familias y sigue con una tarjeta por patrón; el modo práctica oculta columnas. */
+:root{
+  --bg:#f4f5f9; --surface:#ffffff; --ink:#1a1d33; --muted:#5d6280; --line:#dfe2ec;
+  --c-aaa:#0f8a7e; --c-abb:#3b4cca; --c-aba:#b4630a; --c-abc:#c0306b; --c-reb:#4a4f63;
+  --c-pre:#7a3fc4; --c-rar:#7d6a12;
+  --hl-bg:rgba(255,196,0,.32); --hide:#e8eaf2;
+  --f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --f-body:"Source Sans 3","Segoe UI",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#11131f; --surface:#1a1d2d; --ink:#eceefa; --muted:#a2a7c4; --line:#2c3048;
+    --c-aaa:#3cc7b8; --c-abb:#8b97ff; --c-aba:#f2a54a; --c-abc:#f2709f; --c-reb:#b3b8cc;
+    --c-pre:#b98bff; --c-rar:#d8c25a; --hl-bg:rgba(255,196,0,.22); --hide:#262a40; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#11131f; --surface:#1a1d2d; --ink:#eceefa; --muted:#a2a7c4; --line:#2c3048;
+  --c-aaa:#3cc7b8; --c-abb:#8b97ff; --c-aba:#f2a54a; --c-abc:#f2709f; --c-reb:#b3b8cc;
+  --c-pre:#b98bff; --c-rar:#d8c25a; --hl-bg:rgba(255,196,0,.22); --hide:#262a40; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 20px 80px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.1}
+h1{font-size:clamp(2rem,5vw,3.1rem);font-weight:800;letter-spacing:-.02em}
+.lede{max-width:65ch;color:var(--muted);margin:10px 0 0}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 14px;font-size:.95rem}
+.stat b{font-family:var(--f-display);font-size:1.25rem;margin-right:4px;font-variant-numeric:tabular-nums}
+
+.tabs{display:flex;gap:6px;margin-top:22px;border-bottom:2px solid var(--line);flex-wrap:wrap}
+.tabs a{font-family:var(--f-display);font-weight:700;font-size:1.05rem;text-decoration:none;color:var(--muted);padding:10px 16px;border-radius:10px 10px 0 0;margin-bottom:-2px;border:2px solid transparent}
+.tabs a[aria-current="page"]{color:var(--ink);background:var(--surface);border-color:var(--line);border-bottom-color:var(--surface)}
+.tabs a:hover{color:var(--ink)}
+.tabs a:focus-visible{outline:3px solid var(--c-abb);outline-offset:2px}
+.tabs a small{font-family:var(--f-mono);font-weight:500;font-size:.75rem;margin-left:6px;color:var(--muted)}
+
+.map{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:12px;margin:24px 0 8px}
+.fam{background:var(--surface);border:1px solid var(--line);border-top:5px solid var(--c);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:10px}
+.fam.extra{border-style:dashed;border-top-style:solid}
+.fam h2{font-size:1.05rem;color:var(--c)}
+.fam .code{font-family:var(--f-mono);font-weight:700;font-size:1.4rem;letter-spacing:.04em}
+.fam p{margin:0;font-size:.9rem;color:var(--muted)}
+.fam .chips{display:flex;flex-direction:column;gap:6px}
+.fam button.chip{font:inherit;cursor:pointer;text-align:left;display:flex;justify-content:space-between;gap:8px;color:var(--ink);font-size:.88rem;padding:6px 8px;border-radius:8px;background:color-mix(in srgb,var(--c) 9%,transparent);border:1px solid color-mix(in srgb,var(--c) 22%,transparent)}
+.fam button.chip:hover,.fam button.chip:focus-visible{background:color-mix(in srgb,var(--c) 18%,transparent);outline:none}
+.fam button.chip span:last-child{font-family:var(--f-mono);color:var(--muted);font-size:.8rem;white-space:nowrap}
+.bar{height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--c)}
+.optlbl{font-family:var(--f-mono);font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:12px}
+.rulebox{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.rulebox h3{font-size:1rem;margin-bottom:8px}
+.rulebox ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+.rulebox li{display:flex;gap:10px;align-items:baseline;font-size:.92rem}
+.rulebox li .badge{flex:none}
+.rulebox p{margin:6px 0 0;font-size:.9rem;color:var(--muted)}
+
+.controls{position:sticky;top:0;z-index:5;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(6px);padding:12px 0;margin:20px 0 8px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;border-bottom:1px solid var(--line)}
+.controls .lbl{font-weight:700;font-size:.9rem;color:var(--muted)}
+#q{flex:1 1 220px;min-width:180px;font:inherit;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+#q:focus-visible,button:focus-visible{outline:3px solid var(--c-abb);outline-offset:2px}
+.seg{display:flex;flex-wrap:wrap;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface)}
+.seg button{font:inherit;font-size:.9rem;border:0;background:transparent;color:var(--ink);padding:8px 12px;cursor:pointer;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg);font-weight:700}
+.hint{font-size:.85rem;color:var(--muted);width:100%}
+
+.groups{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;margin-top:16px}
+.groups.wide{grid-template-columns:repeat(auto-fill,minmax(480px,1fr))}
+.grp{background:var(--surface);border:1px solid var(--line);border-left:6px solid var(--c);border-radius:12px;padding:16px 16px 10px;display:flex;flex-direction:column;gap:10px;scroll-margin-top:90px}
+.grp header{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.grp h3{font-size:1.15rem}
+.tag{font-family:var(--f-mono);font-size:.72rem;font-weight:700;color:var(--c);border:1px solid var(--c);border-radius:999px;padding:2px 8px;white-space:nowrap}
+.formula{font-family:var(--f-mono);font-weight:700;font-size:1.02rem;color:var(--c);background:color-mix(in srgb,var(--c) 9%,transparent);border-radius:8px;padding:8px 10px}
+.tip{margin:0;font-size:.92rem;color:var(--muted)}
+.tblwrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.98rem}
+th{text-align:left;font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700;padding:6px;border-bottom:2px solid var(--line)}
+td{padding:6px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td.v{font-family:var(--f-mono);font-weight:500;white-space:nowrap}
+td.v.inf{font-weight:700}
+td.es{color:var(--muted);font-size:.9rem}
+td.ex{font-size:.92rem;font-style:italic}
+td.ex b{font-style:normal;color:var(--c)}
+mark{background:var(--hl-bg);color:inherit;border-radius:3px;padding:0 1px;font-weight:700}
+small.alt{display:block;font-family:var(--f-body);color:var(--muted);font-size:.78rem;white-space:normal}
+.badge{font-family:var(--f-mono);font-size:.7rem;font-weight:700;border-radius:6px;padding:1px 6px;background:var(--hide);color:var(--ink);white-space:nowrap}
+td.hidden{cursor:pointer;position:relative;background:repeating-linear-gradient(-45deg,var(--hide),var(--hide) 6px,transparent 6px,transparent 12px)}
+td.hidden > *{visibility:hidden}
+td.hidden::after{content:"ver";position:absolute;left:8px;top:6px;font-family:var(--f-body);font-size:.75rem;color:var(--muted)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.empty{color:var(--muted);padding:20px 0}
+.note{background:var(--surface);border:1px dashed var(--line);border-radius:12px;padding:16px 18px;margin-top:24px;max-width:80ch}
+.note h3{font-size:1.05rem;margin-bottom:6px}
+.note p{margin:6px 0;color:var(--muted)}
+.note code{font-family:var(--f-mono);font-size:.9em;color:var(--ink)}
+.map.five{grid-template-columns:repeat(5,1fr)}
+.map.two{grid-template-columns:repeat(2,1fr);margin-top:0}
+.map.two .chips{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+@media (max-width:980px){.map.five{grid-template-columns:repeat(2,1fr)}.map.two{grid-template-columns:1fr}}
+@media (max-width:520px){.map.five{grid-template-columns:1fr}}
+/* Tarjetas */
+.fc{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:20px;margin-top:20px;align-items:start}
+.fc-side{display:flex;flex-direction:column;gap:12px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.panel h3{font-size:1rem}
+.panel label{display:flex;gap:8px;align-items:center;font-size:.95rem;cursor:pointer}
+.panel select{font:inherit;padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.boxes{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;text-align:center}
+.boxes div{border-radius:8px;padding:6px 2px;background:var(--hide)}
+.boxes b{display:block;font-family:var(--f-display);font-size:1.3rem;font-variant-numeric:tabular-nums}
+.boxes span{font-size:.72rem;color:var(--muted)}
+.card-wrap{perspective:1400px}
+.card{position:relative;width:100%;min-height:340px;border:0;padding:0;background:none;cursor:pointer;transform-style:preserve-3d;-webkit-transform-style:preserve-3d;transition:transform .45s ease;font:inherit;color:inherit;display:block}
+.card.flipped{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:20px;border:1px solid var(--line);border-top:8px solid var(--c);background:var(--surface);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:28px;text-align:center}
+.face.back{transform:rotateY(180deg)}
+.face .kind{font-family:var(--f-mono);font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--c)}
+.face .big{font-family:var(--f-display);font-weight:800;font-size:clamp(2.2rem,7vw,3.6rem);line-height:1.05}
+.face .mid{font-family:var(--f-mono);font-weight:700;font-size:clamp(1.3rem,4vw,1.9rem)}
+.face .es{font-size:1.15rem;color:var(--muted)}
+.face .ex{font-style:italic;font-size:1.05rem;max-width:40ch}
+.face .tap{font-size:.85rem;color:var(--muted)}
+.answer{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.answer button{font:inherit;font-weight:700;font-size:1.05rem;padding:16px;border-radius:14px;cursor:pointer;border:2px solid}
+.answer .no{background:color-mix(in srgb,var(--c-abc) 12%,transparent);border-color:var(--c-abc);color:var(--ink)}
+.answer .yes{background:color-mix(in srgb,var(--c-aaa) 12%,transparent);border-color:var(--c-aaa);color:var(--ink)}
+.answer button:disabled{opacity:.4;cursor:not-allowed}
+.small-btn{font:inherit;font-size:.88rem;padding:8px 12px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.confirm{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:.9rem}
+@media (max-width:820px){.fc{grid-template-columns:1fr}}
+@media (prefers-reduced-motion: reduce){.card{transition:none}}
+
+@media (max-width:560px){.groups,.groups.wide{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Verbos en inglés por patrones</h1>
+  <p class="lede" id="lede"></p>
+  <div class="stats" id="stats"></div>
+  <nav class="tabs" id="tabs" aria-label="Secciones"></nav>
+  <div id="intro"></div>
+  <div class="controls">
+    <input id="q" type="search" placeholder="Buscar en inglés o en español…" aria-label="Buscar">
+    <span class="lbl" id="practLbl">Practicar:</span>
+    <div class="seg" role="group" aria-labelledby="practLbl" id="modes"></div>
+    <span class="hint">En modo práctica, toca una celda rayada para comprobar tu respuesta.</span>
+  </div>
+  <div class="groups" id="groups"></div>
+  <div id="outro"></div>
+</div>
+
+<script>
+const FAM = {
+  aaa:{name:"Las tres iguales", code:"A·A·A", desc:"No cambian nunca. Casi todos son cortos y acaban en -t o -d.", c:"--c-aaa"},
+  abb:{name:"Pasado = participio", code:"A·B·B", desc:"Aprendes una sola forma nueva y la usas dos veces.", c:"--c-abb"},
+  aba:{name:"Participio = infinitivo", code:"A·B·A", desc:"Solo cambia el pasado.", c:"--c-aba"},
+  abc:{name:"Las tres distintas", code:"A·B·C", desc:"Tres formas, pero con fórmulas que se repiten.", c:"--c-abc"},
+  reb:{name:"Los rebeldes", code:"?·?·?", desc:"Sin patrón: memorízalos aparte. Son pocos y muy usados.", c:"--c-reb"},
+  pre:{name:"Con prefijo", code:"pre+A", desc:"Opcional. Se conjugan igual que el verbo base.", c:"--c-pre", extra:true},
+  rar:{name:"Raros y literarios", code:"★", desc:"Opcional. Casi solo en libros antiguos, la Biblia o fantasía.", c:"--c-rar", extra:true}
+};
+
+// [infinitivo, pasado, participio, español, nota opcional]
+const G = [
+ {id:"tres-iguales", fam:"aaa", t:"Las tres iguales", f:"cut → cut → cut", tip:"Truco: si el verbo es de una sílaba y acaba en -t o -d, sospecha que no cambia.", v:[
+  ["bet","bet","bet","apostar"],["bid","bid","bid","pujar, ofertar"],["broadcast","broadcast","broadcast","transmitir"],["burst","burst","burst","reventar"],["bust","bust","bust","romper, arrestar","también busted"],["cast","cast","cast","lanzar, dar un papel"],["cost","cost","cost","costar"],["cut","cut","cut","cortar"],["fit","fit","fit","quedar bien, encajar","también fitted (UK)"],["forecast","forecast","forecast","pronosticar"],["hit","hit","hit","golpear"],["hurt","hurt","hurt","herir, doler"],["input","input","input","introducir (datos)"],["knit","knit","knit","tejer","también knitted"],["let","let","let","dejar, permitir"],["offset","offset","offset","compensar"],["outbid","outbid","outbid","superar una oferta"],["put","put","put","poner"],["quit","quit","quit","dejar, renunciar"],["read","read","read","leer","pasado y participio suenan /red/"],["reset","reset","reset","restablecer"],["rid","rid","rid","librar(se) de"],["set","set","set","colocar, fijar"],["shed","shed","shed","desprender, soltar"],["shut","shut","shut","cerrar"],["slit","slit","slit","rajar"],["split","split","split","dividir"],["spread","spread","spread","extender, untar"],["sublet","sublet","sublet","subarrendar"],["thrust","thrust","thrust","empujar con fuerza"],["upset","upset","upset","molestar, alterar"],["wed","wed","wed","casarse","también wedded"],["wet","wet","wet","mojar","también wetted"]
+ ]},
+ {id:"ought", fam:"abb", t:"Los de -ought / -aught", f:"think → thought → thought", tip:"Todos suenan /ɔːt/ al final. Con a solo catch y teach.", v:[
+  ["bring","brought","brought","traer"],["buy","bought","bought","comprar"],["fight","fought","fought","pelear"],["seek","sought","sought","buscar"],["think","thought","thought","pensar"],["catch","caught","caught","atrapar"],["teach","taught","taught","enseñar"]
+ ]},
+ {id:"eep-ept", fam:"abb", t:"-eep se vuelve -ept", f:"keep → kept → kept", tip:"La ee larga se acorta a e y se añade -t.", v:[
+  ["keep","kept","kept","guardar, mantener"],["sleep","slept","slept","dormir"],["sweep","swept","swept","barrer"],["weep","wept","wept","llorar"],["creep","crept","crept","arrastrarse"],["leap","leapt","leapt","saltar","también leaped"]
+ ]},
+ {id:"vocal-corta-t", fam:"abb", t:"Vocal larga que se acorta + t", f:"feel → felt → felt", tip:"Misma idea que -eep: la vocal se acorta y aparece una -t.", v:[
+  ["feel","felt","felt","sentir"],["kneel","knelt","knelt","arrodillarse","también kneeled"],["deal","dealt","dealt","tratar, repartir"],["mean","meant","meant","significar, querer decir"],["dream","dreamt","dreamt","soñar","también dreamed"],["lean","leant","leant","apoyarse","también leaned"],["leave","left","left","dejar, irse"],["lose","lost","lost","perder"]
+ ]},
+ {id:"d-a-t", fam:"abb", t:"La -d final se vuelve -t", f:"send → sent → sent", tip:"Casi todos acaban en -end.", v:[
+  ["bend","bent","bent","doblar"],["lend","lent","lent","prestar"],["send","sent","sent","enviar"],["spend","spent","spent","gastar, pasar (tiempo)"],["build","built","built","construir"]
+ ]},
+ {id:"t-britanica", fam:"abb", t:"-t británica (o -ed regular)", f:"learn → learnt → learnt", tip:"En EE. UU. se usan casi siempre regulares (learned, burned). Con saber la versión -ed basta.", v:[
+  ["burn","burnt","burnt","quemar","US: burned"],["learn","learnt","learnt","aprender","US: learned"],["spell","spelt","spelt","deletrear","US: spelled"],["spill","spilt","spilt","derramar","US: spilled"],["spoil","spoilt","spoilt","estropear, consentir","US: spoiled"],["smell","smelt","smelt","oler","US: smelled"],["dwell","dwelt","dwelt","morar, detenerse en","también dwelled"]
+ ]},
+ {id:"ee-e", fam:"abb", t:"Doble vocal que queda en una e", f:"feed → fed → fed", tip:"Quita una letra del sonido largo: ee o ea pasan a e.", v:[
+  ["bleed","bled","bled","sangrar"],["breed","bred","bred","criar"],["feed","fed","fed","alimentar"],["flee","fled","fled","huir"],["lead","led","led","guiar, liderar"],["meet","met","met","conocer, reunirse"],["plead","pled","pled","suplicar, declararse (culpable)","US; también pleaded"],["speed","sped","sped","ir a toda velocidad","también speeded"]
+ ]},
+ {id:"ing-ung", fam:"abb", t:"La i pasa a u (dos veces)", f:"swing → swung → swung", tip:"Primos de drink–drank–drunk, pero sin la a del medio.", v:[
+  ["cling","clung","clung","aferrarse"],["fling","flung","flung","arrojar"],["sling","slung","slung","colgar, lanzar"],["sting","stung","stung","picar (insecto)"],["string","strung","strung","ensartar"],["swing","swung","swung","balancear(se)"],["wring","wrung","wrung","escurrir, retorcer"],["slink","slunk","slunk","escabullirse"],["sneak","snuck","snuck","colarse, escabullirse","US; también sneaked"],["stick","stuck","stuck","pegar, clavar"],["dig","dug","dug","cavar"],["spin","spun","spun","girar, hilar"],["strike","struck","struck","golpear, atacar"],["hang","hung","hung","colgar","hanged = ahorcar (regular)"]
+ ]},
+ {id:"ind-ound", fam:"abb", t:"-ind se vuelve -ound", f:"find → found → found", tip:"Rima perfecta: bound, found, ground, wound.", v:[
+  ["bind","bound","bound","atar, encuadernar"],["find","found","found","encontrar"],["grind","ground","ground","moler"],["wind","wound","wound","enrollar, dar cuerda","se pronuncia /waɪnd/ – /waʊnd/"]
+ ]},
+ {id:"ell-old", fam:"abb", t:"-ell se vuelve -old", f:"sell → sold → sold", tip:"Solo dos verbos base, más sus prefijos.", v:[
+  ["sell","sold","sold","vender"],["tell","told","told","decir, contar"],["foretell","foretold","foretold","predecir"],["retell","retold","retold","volver a contar"]
+ ]},
+ {id:"ay-aid", fam:"abb", t:"-ay se vuelve -aid", f:"pay → paid → paid", tip:"Es casi regular: cambia la y por i y se añade d. Ojo: said suena /sed/.", v:[
+  ["lay","laid","laid","poner, colocar"],["pay","paid","paid","pagar"],["say","said","said","decir"],["mislay","mislaid","mislaid","extraviar"],["overpay","overpaid","overpaid","pagar de más"]
+ ]},
+ {id:"and-ood", fam:"abb", t:"-and se vuelve -ood", f:"stand → stood → stood", tip:"Un verbo base y una familia entera de compuestos.", v:[
+  ["stand","stood","stood","estar de pie"],["understand","understood","understood","entender"],["misunderstand","misunderstood","misunderstood","malinterpretar"],["withstand","withstood","withstood","resistir, soportar"]
+ ]},
+ {id:"otros-abb", fam:"abb", t:"Otros con pasado = participio", f:"sit → sat → sat", tip:"Sin fórmula común, pero con una sola forma nueva que aprender.", v:[
+  ["have","had","had","tener, haber"],["make","made","made","hacer, fabricar"],["hear","heard","heard","oír"],["hold","held","held","sostener"],["uphold","upheld","upheld","defender, mantener"],["withhold","withheld","withheld","retener"],["sit","sat","sat","sentarse"],["spit","spat","spat","escupir","US: spit"],["win","won","won","ganar"],["shine","shone","shone","brillar"],["shoot","shot","shot","disparar"],["light","lit","lit","encender","también lighted"],["slide","slid","slid","deslizar"],["get","got","got","conseguir, llegar","US: participio gotten"]
+ ]},
+ {id:"aba", fam:"aba", t:"Vuelven al infinitivo", f:"come → came → come", tip:"Solo dos verbos base, el resto son compuestos.", v:[
+  ["come","came","come","venir"],["become","became","become","llegar a ser, volverse"],["overcome","overcame","overcome","superar"],["run","ran","run","correr"],["outrun","outran","outrun","correr más que"]
+ ]},
+ {id:"i-a-u", fam:"abc", t:"i → a → u", f:"drink → drank → drunk", tip:"El patrón más famoso. Pasado con a, participio con u.", v:[
+  ["begin","began","begun","empezar"],["drink","drank","drunk","beber"],["ring","rang","rung","sonar, llamar"],["shrink","shrank","shrunk","encoger"],["sing","sang","sung","cantar"],["sink","sank","sunk","hundir(se)"],["spring","sprang","sprung","saltar, brotar"],["stink","stank","stunk","apestar"],["swim","swam","swum","nadar"]
+ ]},
+ {id:"ew-own", fam:"abc", t:"-ew en pasado, -own / -awn en participio", f:"grow → grew → grown", tip:"Pasado acaba en -ew; participio = infinitivo + n.", v:[
+  ["blow","blew","blown","soplar"],["grow","grew","grown","crecer"],["know","knew","known","saber, conocer"],["throw","threw","thrown","lanzar"],["overthrow","overthrew","overthrown","derrocar"],["fly","flew","flown","volar"],["draw","drew","drawn","dibujar, sacar"],["withdraw","withdrew","withdrawn","retirar"]
+ ]},
+ {id:"ear-ore-orn", fam:"abc", t:"-ear → -ore → -orn", f:"wear → wore → worn", tip:"Cuatro verbos que riman entre sí en las tres formas.", v:[
+  ["bear","bore","borne","soportar, dar a luz","born = nacido"],["swear","swore","sworn","jurar, decir groserías"],["tear","tore","torn","rasgar"],["wear","wore","worn","llevar puesto"]
+ ]},
+ {id:"i-o-iden", fam:"abc", t:"i → o → i + en", f:"write → wrote → written", tip:"Pasado con o; participio vuelve a la i y añade -en (a veces dobla la consonante).", v:[
+  ["drive","drove","driven","conducir"],["ride","rode","ridden","montar"],["rise","rose","risen","subir, levantarse"],["arise","arose","arisen","surgir"],["write","wrote","written","escribir"],["stride","strode","stridden","dar zancadas"],["strive","strove","striven","esforzarse","también strived"]
+ ]},
+ {id:"ake-ook", fam:"abc", t:"-ake → -ook → -aken", f:"take → took → taken", tip:"Participio = infinitivo + n.", v:[
+  ["take","took","taken","tomar, llevar"],["mistake","mistook","mistaken","confundir"],["overtake","overtook","overtaken","adelantar"],["undertake","undertook","undertaken","emprender"],["partake","partook","partaken","participar"],["shake","shook","shaken","sacudir"],["forsake","forsook","forsaken","abandonar"]
+ ]},
+ {id:"o-oken", fam:"abc", t:"o en pasado, o + en en participio", f:"break → broke → broken", tip:"Saca el pasado con o y súmale -en: broke → broken, chose → chosen.", v:[
+  ["break","broke","broken","romper"],["speak","spoke","spoken","hablar"],["steal","stole","stolen","robar"],["freeze","froze","frozen","congelar"],["choose","chose","chosen","elegir"],["wake","woke","woken","despertar(se)"],["awake","awoke","awoken","despertar(se)"],["weave","wove","woven","tejer"],["tread","trod","trodden","pisar"],["forget","forgot","forgotten","olvidar"]
+ ]},
+ {id:"pasado-en", fam:"abc", t:"Participio = pasado + en", f:"bite → bit → bitten", tip:"Toma el pasado, dobla la consonante si hace falta y añade -en.", v:[
+  ["bite","bit","bitten","morder"],["hide","hid","hidden","esconder"],["beat","beat","beaten","vencer, golpear"]
+ ]},
+ {id:"inf-en", fam:"abc", t:"Participio = infinitivo + en / n", f:"eat → ate → eaten", tip:"El participio sale del infinitivo; solo el pasado es nuevo.", v:[
+  ["eat","ate","eaten","comer"],["fall","fell","fallen","caer"],["give","gave","given","dar"],["forgive","forgave","forgiven","perdonar"],["see","saw","seen","ver"],["foresee","foresaw","foreseen","prever"],["forbid","forbade","forbidden","prohibir"]
+ ]},
+ {id:"ed-n", fam:"abc", t:"Pasado regular, participio en -n", f:"show → showed → shown", tip:"Medio regulares: pasado con -ed, participio con -n.", v:[
+  ["show","showed","shown","mostrar"],["sew","sewed","sewn","coser"],["sow","sowed","sown","sembrar"],["mow","mowed","mown","cortar el césped","también mowed"],["saw","sawed","sawn","serrar","también sawed"],["swell","swelled","swollen","hinchar(se)"],["prove","proved","proven","probar, demostrar","también proved"]
+ ]},
+ {id:"rebeldes", fam:"reb", t:"Los rebeldes", f:"go → went → gone", tip:"Sin fórmula. Son los más usados del idioma, así que los verás a diario.", v:[
+  ["be","was / were","been","ser, estar"],["do","did","done","hacer"],["undo","undid","undone","deshacer"],["go","went","gone","ir"],["undergo","underwent","undergone","someterse a"],["lie","lay","lain","yacer, estar acostado","lie = mentir es regular"],["slay","slew","slain","matar (literario)"],["dive","dove","dived","zambullirse, bucear","US; en UK es regular: dived"]
+ ]},
+ {id:"pre-mis", fam:"pre", t:"mis- (mal, equivocadamente)", f:"lead → led  ⟹  mislead → misled", tip:"Ya están arriba: mistake, misunderstand, mislay.", v:[
+  ["mislead","misled","misled","engañar, despistar"],["misread","misread","misread","leer mal, malinterpretar"],["mishear","misheard","misheard","oír mal"],["misspell","misspelt","misspelt","escribir mal","US: misspelled"],["misspend","misspent","misspent","malgastar"]
+ ]},
+ {id:"pre-re", fam:"pre", t:"re- (otra vez)", f:"write → wrote  ⟹  rewrite → rewrote", tip:"Ya están arriba: reset, retell.", v:[
+  ["rebuild","rebuilt","rebuilt","reconstruir"],["recast","recast","recast","reformular, cambiar el reparto"],["redo","redid","redone","rehacer"],["relearn","relearnt","relearnt","volver a aprender","US: relearned"],["remake","remade","remade","rehacer, nueva versión"],["repay","repaid","repaid","devolver (dinero)"],["reread","reread","reread","releer"],["rerun","reran","rerun","repetir, retransmitir"],["resell","resold","resold","revender"],["resend","resent","resent","reenviar"],["retake","retook","retaken","repetir (examen), recuperar"],["rethink","rethought","rethought","replantear"],["rewind","rewound","rewound","rebobinar"],["rewrite","rewrote","rewritten","reescribir"]
+ ]},
+ {id:"pre-out", fam:"pre", t:"out- (superar a alguien)", f:"do → did  ⟹  outdo → outdid", tip:"Ya están arriba: outrun, outbid.", v:[
+  ["outdo","outdid","outdone","superar, hacer mejor"],["outgrow","outgrew","outgrown","quedarle pequeño algo"],["outshine","outshone","outshone","eclipsar, brillar más"],["outsell","outsold","outsold","vender más que"],["outfight","outfought","outfought","vencer peleando"]
+ ]},
+ {id:"pre-over", fam:"pre", t:"over- (demasiado, por encima)", f:"sleep → slept  ⟹  oversleep → overslept", tip:"Ya están arriba: overcome, overtake, overthrow, overpay.", v:[
+  ["overdo","overdid","overdone","exagerar, pasarse"],["overdraw","overdrew","overdrawn","sobregirar (cuenta)"],["overeat","overate","overeaten","comer en exceso"],["overfeed","overfed","overfed","sobrealimentar"],["overhang","overhung","overhung","sobresalir"],["overhear","overheard","overheard","oír sin querer"],["overlay","overlaid","overlaid","superponer"],["override","overrode","overridden","anular, invalidar"],["overrun","overran","overrun","invadir, excederse"],["oversee","oversaw","overseen","supervisar"],["oversell","oversold","oversold","exagerar las virtudes"],["overshoot","overshot","overshot","pasarse (de la meta)"],["oversleep","overslept","overslept","quedarse dormido"],["overspend","overspent","overspent","gastar de más"],["overwrite","overwrote","overwritten","sobrescribir"]
+ ]},
+ {id:"pre-under", fam:"pre", t:"under- (por debajo, de menos)", f:"pay → paid  ⟹  underpay → underpaid", tip:"Ya están arriba: understand, undertake, undergo.", v:[
+  ["undercut","undercut","undercut","vender más barato"],["underfeed","underfed","underfed","alimentar mal"],["underlie","underlay","underlain","ser la base de"],["underpay","underpaid","underpaid","pagar de menos"],["undersell","undersold","undersold","subestimar, vender barato"],["underspend","underspent","underspent","gastar menos de lo previsto"],["underwrite","underwrote","underwritten","asegurar, respaldar"]
+ ]},
+ {id:"pre-un", fam:"pre", t:"un- (deshacer)", f:"wind → wound  ⟹  unwind → unwound", tip:"Ya está arriba: undo.", v:[
+  ["unbend","unbent","unbent","enderezar, relajarse"],["unbind","unbound","unbound","desatar"],["unfreeze","unfroze","unfrozen","descongelar"],["unlearn","unlearnt","unlearnt","desaprender","US: unlearned"],["unsay","unsaid","unsaid","retirar lo dicho"],["unstick","unstuck","unstuck","despegar"],["unwind","unwound","unwound","desenrollar, relajarse"]
+ ]},
+ {id:"pre-otros", fam:"pre", t:"be-, fore-, y otros compuestos", f:"sit → sat  ⟹  babysit → babysat", tip:"Ya están arriba: become, foresee, foretell, forecast, withdraw, withhold, withstand, uphold, upset.", v:[
+  ["befall","befell","befallen","sobrevenir, ocurrirle a"],["beset","beset","beset","acosar"],["forego","forewent","foregone","preceder"],["babysit","babysat","babysat","cuidar niños"],["browbeat","browbeat","browbeaten","intimidar"],["daydream","daydreamt","daydreamt","soñar despierto","también daydreamed"],["handwrite","handwrote","handwritten","escribir a mano"],["lip-read","lip-read","lip-read","leer los labios"],["spoon-feed","spoon-fed","spoon-fed","dar de comer con cuchara"],["waylay","waylaid","waylaid","abordar, interceptar"],["hamstring","hamstrung","hamstrung","obstaculizar"]
+ ]},
+ {id:"raros", fam:"rar", t:"Raros y literarios", f:"smite → smote → smitten", tip:"Opcionales. Muchos tienen ya una versión regular más usada.", v:[
+  ["abide","abode","abode","soportar, morar","también abided"],["beget","begot","begotten","engendrar"],["behold","beheld","beheld","contemplar"],["bereave","bereft","bereft","privar, despojar","también bereaved"],["beseech","besought","besought","suplicar"],["bestride","bestrode","bestridden","montar a horcajadas"],["chide","chid","chidden","reprender","también chided"],["cleave","clove","cloven","partir, hender","también cleft"],["clothe","clad","clad","vestir","también clothed"],["forgo","forwent","forgone","renunciar a"],["forswear","forswore","forsworn","abjurar"],["gild","gilt","gilt","dorar","también gilded"],["gird","girt","girt","ceñir","también girded"],["hew","hewed","hewn","tallar, talar"],["rend","rent","rent","desgarrar"],["shear","sheared","shorn","esquilar"],["shoe","shod","shod","herrar, calzar"],["smite","smote","smitten","golpear, castigar"],["stave","stove","stove","romper, desfondar","también staved"],["strew","strewed","strewn","esparcir"],["thrive","throve","thriven","prosperar","hoy casi siempre thrived"]
+ ]}
+];
+
+
+// Verbos regulares agrupados por cómo suena la -ed.
+// Formato: "verbo:español". "*" = dobla la consonante final. "a>b" = pasado escrito a mano.
+const REG = [
+ {id:"id", snd:"/ɪd/", t:"Suena /ɪd/: una sílaba más", rule:"Cuando el verbo termina en sonido t o d.", ex:"wanted suena «wán-tid»", c:"--c-abc", list:
+ "want:querer|need:necesitar|start:empezar|decide:decidir|visit:visitar|wait:esperar|add:añadir|end:terminar|invite:invitar|include:incluir|create:crear|expect:esperar, suponer|hate:odiar|count:contar|paint:pintar|plant:plantar|point:señalar|print:imprimir|protect:proteger|rent:alquilar|repeat:repetir|report:informar|respect:respetar|rest:descansar|shout:gritar|test:probar|treat:tratar|trust:confiar|accept:aceptar|act:actuar|attend:asistir|avoid:evitar|celebrate:celebrar|collect:coleccionar|complete:completar|connect:conectar|defend:defender|depend:depender|divide:dividir|educate:educar|exist:existir|guide:guiar|hand:entregar|land:aterrizar|load:cargar|mind:importar|provide:proveer|recommend:recomendar|record:grabar|regard:considerar|remind:recordarle a alguien|succeed:tener éxito|suggest:sugerir|update:actualizar|vote:votar|waste:desperdiciar|adapt:adaptar|admit*:admitir|attract:atraer|calculate:calcular|chat*:charlar|commit*:comprometerse|communicate:comunicar|concentrate:concentrarse|contact:contactar|correct:corregir|date:salir con alguien|delete:borrar|demand:exigir|doubt:dudar|elect:elegir (votando)|estimate:estimar|fold:doblar|greet:saludar|hunt:cazar|invent:inventar|list:enumerar|melt:derretir|omit*:omitir|operate:operar|permit*:permitir|pretend:fingir|prevent:prevenir|relate:relacionar|separate:separar|translate:traducir|interrupt:interrumpir|investigate:investigar|graduate:graduarse|decorate:decorar|lift:levantar|post:publicar|quote:citar|reject:rechazar|shift:cambiar, mover|state:declarar|suspect:sospechar|tempt:tentar|twist:torcer"},
+ {id:"t", snd:"/t/", t:"Suena /t/: sin sílaba extra", rule:"Cuando termina en sonido sordo: p, k, s, sh, ch, f, x.", ex:"worked suena «workt»", c:"--c-abb", list:
+ "work:trabajar|walk:caminar|talk:hablar|look:mirar|like:gustar|help:ayudar|ask:preguntar|cook:cocinar|kiss:besar|laugh:reír|watch:ver, mirar|wash:lavar|finish:terminar|stop*:parar|drop*:dejar caer|shop*:ir de compras|hope:esperar (ilusión)|jump:saltar|pass:pasar, aprobar|miss:extrañar, perder|dance:bailar|practice:practicar|produce:producir|notice:notar|place:colocar|face:enfrentar|force:forzar|reduce:reducir|introduce:presentar|increase:aumentar|promise:prometer|relax:relajarse|fix:arreglar|mix:mezclar|kick:patear|knock:tocar (la puerta)|pick:escoger|check:revisar|thank:agradecer|park:estacionar|mark:marcar|smoke:fumar|bake:hornear|pack:empacar|crash:chocar|push:empujar|brush:cepillar|touch:tocar|reach:alcanzar|search:buscar|match:combinar, coincidir|attach:adjuntar|publish:publicar|wish:desear|rush:apresurarse|stretch:estirar|type:escribir (teclado)|develop:desarrollar|escape:escapar|slip*:resbalar|step*:pisar|trap*:atrapar|wrap*:envolver|clap*:aplaudir|ship*:enviar|shape:dar forma|guess:adivinar|address:dirigirse a|discuss:discutir, hablar de|express:expresar|impress:impresionar|press:presionar|process:procesar|confess:confesar|dress:vestirse|cross:cruzar|chase:perseguir|release:liberar, lanzar|purchase:comprar|embarrass:avergonzar|unlock:desbloquear|attack:atacar|blink:parpadear|link:enlazar|lack:carecer de|track:rastrear|shock:impactar|book:reservar|cough:toser|sniff:olfatear|stuff:rellenar|punish:castigar|establish:establecer|vanish:desaparecer|polish:pulir|approach:acercarse|coach:entrenar|switch:cambiar, encender|fetch:ir a buscar|picnic>picnicked:hacer un picnic|panic>panicked:entrar en pánico"},
+ {id:"d", snd:"/d/", t:"Suena /d/: sin sílaba extra", rule:"Con todo lo demás: vocales y consonantes sonoras (b, g, l, m, n, r, v, z…).", ex:"played suena «pleid»", c:"--c-aaa", list:
+ "play:jugar, tocar|call:llamar|live:vivir|love:amar|open:abrir|close:cerrar|clean:limpiar|listen:escuchar|turn:girar|use:usar|change:cambiar|study:estudiar|try:intentar|cry:llorar|carry:cargar|worry:preocuparse|marry:casarse|hurry:apresurarse|copy:copiar|apply:aplicar, postularse|reply:responder|deny:negar|enjoy:disfrutar|stay:quedarse|pray:rezar|obey:obedecer|arrive:llegar|believe:creer|move:mover, mudarse|save:ahorrar, guardar|serve:servir|solve:resolver|receive:recibir|achieve:lograr|improve:mejorar|involve:involucrar|travel:viajar|cancel:cancelar|control*:controlar|prefer*:preferir|refer*:referirse|occur*:ocurrir|plan*:planear|ban*:prohibir|rob*:robar|grab*:agarrar|hug*:abrazar|beg*:rogar|jog*:trotar|rub*:frotar|stir*:revolver|allow:permitir|follow:seguir|borrow:pedir prestado|answer:responder|remember:recordar|order:pedir, ordenar|offer:ofrecer|enter:entrar|happen:suceder|explain:explicar|join:unirse|fill:llenar|kill:matar|pull:jalar|smile:sonreír|share:compartir|compare:comparar|prepare:preparar|care:importar, cuidar|dare:atreverse|score:anotar|ignore:ignorar|explore:explorar|agree:estar de acuerdo|free:liberar|own:poseer|seem:parecer|name:nombrar|fail:fallar, reprobar|rain:llover|train:entrenar|complain:quejarse|remain:permanecer|contain:contener|return:volver, devolver|warn:advertir|earn:ganar (dinero)|mention:mencionar|question:cuestionar|imagine:imaginar|determine:determinar|examine:examinar|describe:describir|judge:juzgar|manage:gestionar, lograr|arrange:organizar|damage:dañar|encourage:animar|exchange:intercambiar|charge:cobrar, cargar|organize:organizar|realize:darse cuenta|recognize:reconocer|apologize:disculparse|surprise:sorprender|advise:aconsejar|refuse:negarse|please:complacer|raise:levantar, criar|pause:pausar|cause:causar|amuse:divertir|breathe:respirar|sign:firmar|design:diseñar|belong:pertenecer|climb:escalar|comb:peinar|deserve:merecer|observe:observar|preserve:conservar|behave:comportarse|wave:saludar con la mano|shave:afeitarse|fear:temer|appear:aparecer|clear:despejar|discover:descubrir|deliver:entregar|consider:considerar|gather:reunir|bother:molestar|suffer:sufrir|wonder:preguntarse|register:registrar|cover:cubrir|recover:recuperar|measure:medir|reveal:revelar|yell:gritar|install:instalar|roll:rodar|boil:hervir|view:ver|snow:nevar|glow:brillar|inform:informar|perform:actuar, realizar|transform:transformar|confirm:confirmar|film:filmar|claim:reclamar, afirmar|blame:culpar|aim:apuntar|scream:gritar|assume:suponer|consume:consumir|welcome:dar la bienvenida"}
+];
+
+// Reglas de ortografía, se calculan solas a partir del verbo
+function regPast(raw){
+  if (raw.includes(">")) { const [i,p]=raw.split(">"); return {inf:i, past:p, rule:"ck"}; }
+  if (raw.endsWith("*")) { const i=raw.slice(0,-1); return {inf:i, past:i+i.slice(-1)+"ed", rule:"dbl"}; }
+  const i=raw;
+  if (i.endsWith("e")) return {inf:i, past:i+"d", rule:"e"};
+  if (/[^aeiou]y$/.test(i)) return {inf:i, past:i.slice(0,-1)+"ied", rule:"y"};
+  return {inf:i, past:i+"ed", rule:"ed"};
+}
+const RULES = {
+  ed:{lbl:"+ed", txt:"La regla general: se añade -ed.", ex:"work → worked"},
+  e:{lbl:"+d", txt:"Si termina en -e, solo se añade -d.", ex:"live → lived"},
+  y:{lbl:"y→ied", txt:"Consonante + y: la y cambia a -ied. Con vocal + y no cambia (play → played).", ex:"study → studied"},
+  dbl:{lbl:"doble", txt:"Una vocal + una consonante en sílaba fuerte: se dobla la consonante.", ex:"stop → stopped"},
+  ck:{lbl:"+ked", txt:"Terminados en -c: se añade -ked.", ex:"panic → panicked"}
+};
+
+// Phrasal verbs con "up", agrupados por lo que aporta "up".
+// [phrasal, español, ejemplo]
+const UP = [
+ {id:"up-arriba", t:"Hacia arriba", f:"up = arriba", tip:"El significado literal: el cuerpo o una cosa sube.", c:"--c-aaa", v:[
+  ["get up","levantarse (de la cama)","I get up at six every day."],
+  ["stand up","ponerse de pie","Please stand up when the judge comes in."],
+  ["sit up","incorporarse, enderezarse","Sit up straight at the table."],
+  ["wake up","despertarse","I woke up late this morning."],
+  ["pick up","recoger, levantar del suelo","Can you pick up your toys?"],
+  ["lift up","levantar, alzar","He lifted up the box."],
+  ["go up","subir","Prices went up again."],
+  ["look up","mirar hacia arriba","She looked up at the stars."],
+  ["put up","colgar, levantar","We put up a poster in the kitchen."],
+  ["grow up","crecer, hacerse mayor","I grew up in Medellín."],
+  ["bring up","criar","She was brought up by her grandmother."],
+  ["hold up","sostener en alto","Hold up your hand if you know."]
+ ]},
+ {id:"up-completo", t:"Del todo, hasta el final", f:"up = completamente", tip:"up indica que la acción se termina por completo, sin dejar nada.", c:"--c-abb", v:[
+  ["eat up","comérselo todo","Eat up your vegetables!"],
+  ["drink up","bebérselo todo","Drink up, the bar is closing."],
+  ["use up","gastar, agotar","We used up all the milk."],
+  ["fill up","llenar del todo","Fill up the tank, please."],
+  ["clean up","limpiar a fondo","Let's clean up after the party."],
+  ["tidy up","ordenar","Tidy up your room."],
+  ["finish up","terminar, acabar","I'll finish up this email and go."],
+  ["end up","terminar (en un lugar o situación)","We ended up eating pizza."],
+  ["give up","rendirse, dejar (un hábito)","Don't give up! / He gave up smoking."],
+  ["sum up","resumir","To sum up, the plan worked."],
+  ["wrap up","concluir; envolver","Let's wrap up the meeting."],
+  ["lock up","cerrar con llave","Remember to lock up when you leave."],
+  ["tie up","atar bien","Tie up the dog outside."],
+  ["dry up","secarse por completo","The river dried up in summer."],
+  ["pay up","pagar lo que se debe","You lost the bet, pay up!"],
+  ["add up","sumar; tener sentido","His story doesn't add up."]
+ ]},
+ {id:"up-mas", t:"Más: aumentar o mejorar", f:"up = más", tip:"up sube la intensidad, la velocidad, el volumen o el ánimo.", c:"--c-aba", v:[
+  ["speed up","acelerar","The car sped up on the highway."],
+  ["hurry up","darse prisa","Hurry up, we're late!"],
+  ["turn up","subir (volumen, calefacción)","Turn up the music!"],
+  ["warm up","calentar(se)","Warm up before you run."],
+  ["heat up","calentar (comida)","I'll heat up the soup."],
+  ["cheer up","animar(se)","Cheer up, it's not so bad."],
+  ["build up","acumular, fortalecer","Stress builds up over time."],
+  ["step up","intensificar; dar un paso al frente","The police stepped up security."],
+  ["catch up","ponerse al día, alcanzar","Go ahead, I'll catch up with you."],
+  ["keep up","mantener el ritmo","Slow down, I can't keep up!"],
+  ["back up","respaldar; hacer copia de seguridad","Back up your files every week."],
+  ["blow up","inflar; explotar","Help me blow up the balloons."],
+  ["dress up","arreglarse, disfrazarse","We dressed up for the wedding."],
+  ["look up","mejorar (situación)","Things are looking up!"]
+ ]},
+ {id:"up-aparecer", t:"Aparecer, surgir, empezar", f:"up = aparece ante ti", tip:"Algo llega, surge o se pone en marcha.", c:"--c-abc", v:[
+  ["show up","aparecer, presentarse","He showed up two hours late."],
+  ["turn up","aparecer (de forma inesperada)","My lost keys turned up in my bag."],
+  ["come up","surgir","Something came up, I can't go."],
+  ["pop up","aparecer de repente","Ads keep popping up on my screen."],
+  ["bring up","sacar un tema, mencionar","Don't bring up politics at dinner."],
+  ["set up","montar, instalar, fundar","She set up her own business."],
+  ["start up","arrancar, poner en marcha","Start up the computer."],
+  ["sign up","inscribirse","I signed up for English classes."],
+  ["take up","empezar (un pasatiempo); ocupar","I took up yoga last year."],
+  ["open up","abrirse (emocionalmente)","He finally opened up about his problems."],
+  ["look up","buscar (información)","Look up the word in the dictionary."],
+  ["call up","llamar por teléfono","I'll call you up tomorrow."],
+  ["make up","inventar; reconciliarse; maquillarse","They argued but made up later."],
+  ["own up","admitir, confesar","Nobody owned up to breaking the window."]
+ ]},
+ {id:"up-romper", t:"En pedazos o mal", f:"up = destruido, desordenado", tip:"La acción rompe, separa o estropea algo.", c:"--c-pre", v:[
+  ["break up","terminar una relación; romperse","They broke up after two years."],
+  ["split up","separarse","The band split up in 2010."],
+  ["cut up","cortar en trozos","Cut up the onions."],
+  ["chop up","picar","Chop up the garlic finely."],
+  ["tear up","romper en pedazos (papel)","She tore up the letter."],
+  ["beat up","dar una paliza","He got beaten up after school."],
+  ["mess up","arruinar, desordenar","I messed up the exam."],
+  ["mix up","confundir","I always mix up their names."],
+  ["screw up","meter la pata (informal)","I really screwed up this time."],
+  ["throw up","vomitar","The baby threw up on my shirt."]
+ ]},
+ {id:"up-propios", t:"Con significado propio", f:"memorízalos como palabra nueva", tip:"Aquí up no se deduce: apréndelos con su ejemplo.", c:"--c-reb", v:[
+  ["shut up","callarse (brusco)","Shut up and listen!"],
+  ["hang up","colgar (el teléfono)","She hung up on me."],
+  ["stay up","quedarse despierto, trasnochar","We stayed up all night."],
+  ["wait up","esperar despierto","Don't wait up for me."],
+  ["line up","hacer fila","People lined up for tickets."],
+  ["fix up","arreglar, reformar","They fixed up an old house."],
+  ["do up","abrochar","Do up your jacket, it's cold."],
+  ["hold up","retrasar; asaltar","Sorry, I got held up in traffic."],
+  ["put up","alojar a alguien","Can you put me up for the night?"],
+  ["pick up","aprender sin estudiar; recoger a alguien","I picked up some Portuguese in Brazil. / I'll pick you up at 8."],
+  ["come up with","idear, ocurrírsele","She came up with a great idea."],
+  ["put up with","aguantar, tolerar","I can't put up with this noise."],
+  ["look up to","admirar","I've always looked up to my mother."],
+  ["keep up with","seguir el ritmo de, estar al día","It's hard to keep up with the news."],
+  ["catch up with","alcanzar a; ponerse al día con","Let's catch up with Ana this weekend."],
+  ["make up for","compensar","I'll make up for the lost time."],
+  ["stand up for","defender (a alguien o una idea)","Stand up for what you believe in."],
+  ["face up to","afrontar","You have to face up to your problems."],
+  ["be fed up with","estar harto de","I'm fed up with this rain."]
+ ]}
+];
+
+
+function esc(t){return String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+function norm(s){return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"")}
+function diff(base, form){
+  if (form.includes(" / ")) return form.split(" / ").map(x=>diff(base,x)).join(" / ");
+  if (base===form) return esc(form);
+  let p=0; while(p<base.length && p<form.length && base[p]===form[p]) p++;
+  let s=0; while(s<base.length-p && s<form.length-p && base[base.length-1-s]===form[form.length-1-s]) s++;
+  return esc(form.slice(0,p))+"<mark>"+esc(form.slice(p,form.length-s))+"</mark>"+esc(form.slice(form.length-s));
+}
+function cell(cls, hidden, inner){return `<td class="${cls}${hidden?" hidden":""}"><span>${inner}</span></td>`}
+function famCard(f, chips, extra){
+  return `<section class="fam${extra?" extra":""}" style="--c:var(${f.c})">
+    ${extra?`<span class="optlbl">Opcional</span>`:""}
+    <h2>${f.name}</h2><div class="code"${f.code.length>9?' style="font-size:1.05rem"':""}>${f.code}</div>
+    <div class="bar"><i style="width:${f.pct}%"></i></div>
+    <p>${f.desc}</p>
+    <div class="chips">${chips.map(c=>`<button type="button" class="chip" data-go="${c.id}"><span>${esc(c.t)}</span><span>${c.n}</span></button>`).join("")}</div>
+  </section>`;
+}
+
+// ---------- Datos derivados ----------
+const irrMain = G.filter(g=>!FAM[g.fam].extra).reduce((n,g)=>n+g.v.length,0);
+const irrAll = G.reduce((n,g)=>n+g.v.length,0);
+REG.forEach(s=>{ s.items = s.list.split("|").map(e=>{const [w,es]=e.split(":"); return {...regPast(w), es};}); });
+const regAll = REG.reduce((n,s)=>n+s.items.length,0);
+const upAll = UP.reduce((n,g)=>n+g.v.length,0);
+
+const VIEWS = {
+ irregulares:{
+  tab:"Irregulares", count:irrAll,
+  lede:"Agrupados por la forma en que cambian, para que aprendas una fórmula y te lleves varios verbos de una vez. Las letras resaltadas son las que cambian respecto al infinitivo. Empieza por las familias de la izquierda: son las más fáciles.",
+  stats:[[irrMain,"verbos esenciales"],[irrAll-irrMain,"opcionales"],[G.length,"patrones"]],
+  modes:[["none","Ver todo"],["past","Ocultar pasado"],["pp","Ocultar participio"],["both","Ocultar ambos"],["en","Solo español"]],
+  intro(){
+    const cnt={}; G.forEach(g=>cnt[g.fam]=(cnt[g.fam]||0)+g.v.length);
+    const max=Math.max(...Object.values(cnt));
+    const card=([k,f])=>famCard({...f,pct:cnt[k]/max*100,desc:`${cnt[k]} verbos. ${f.desc}`}, G.filter(g=>g.fam===k).map(g=>({id:g.id,t:g.t,n:g.v.length})), f.extra);
+    const fams=Object.entries(FAM);
+    return `<div class="map five">${fams.filter(x=>!x[1].extra).map(card).join("")}</div><div class="map two">${fams.filter(x=>x[1].extra).map(card).join("")}</div>`;
+  },
+  groups(q, mode){
+    const hp=["past","both","en"].includes(mode), hpp=["pp","both","en"].includes(mode), hi=mode==="en";
+    return G.map(g=>{
+      const rows=g.v.filter(v=>!q||norm(v.slice(0,4).join(" ")).includes(q)); if(!rows.length) return "";
+      const f=FAM[g.fam];
+      return {n:rows.length, html:`<article class="grp" id="${g.id}" style="--c:var(${f.c})">
+        <header><h3>${g.t}</h3><span class="tag">${f.code} · ${g.v.length}</span></header>
+        <div class="formula">${esc(g.f)}</div><p class="tip">${g.tip}</p>
+        <div class="tblwrap"><table><thead><tr><th>Infinitivo</th><th>Pasado</th><th>Participio</th><th>Español</th></tr></thead>
+        <tbody>${rows.map(([i,p,pp,es,n])=>`<tr>${cell("v inf",hi,esc(i))}${cell("v",hp,diff(i,p))}${cell("v",hpp,diff(i,pp))}<td class="es">${esc(es)}${n?`<small class="alt">${esc(n)}</small>`:""}</td></tr>`).join("")}</tbody></table></div></article>`};
+    });
+  },
+  outro:`<div class="note"><h3>¿Están todos?</h3>
+    <p>Sí: los ${irrMain} esenciales más ${irrAll-irrMain} opcionales (compuestos con prefijo y formas literarias). Las listas de "1000 irregulares" que circulan repiten verbos o inventan compuestos que nadie usa.</p>
+    <p>Prefijos que multiplican tu lista: <code>under-</code>, <code>over-</code>, <code>mis-</code>, <code>out-</code>, <code>re-</code>, <code>with-</code>, <code>fore-</code>, <code>un-</code>. Se conjugan igual que el verbo base.</p>
+    <p>Cuidado: <code>lie</code> (mentir) es regular: lie – lied – lied. El irregular es <code>lie – lay – lain</code> (yacer, estar acostado).</p></div>`
+ },
+ regulares:{
+  tab:"Regulares", count:regAll, wide:true,
+  lede:"Los regulares se escriben fácil (casi siempre con -ed), pero la -ed se pronuncia de tres maneras. Por eso están agrupados por sonido: así practicas la pronunciación mientras aprendes el vocabulario.",
+  stats:[[regAll,"verbos más usados"],[3,"sonidos de -ed"],[5,"reglas de escritura"]],
+  modes:[["none","Ver todo"],["past","Ocultar pasado"],["en","Solo español"]],
+  intro(){
+    const max=Math.max(...REG.map(s=>s.items.length));
+    const cards=REG.map(s=>famCard({name:s.t, code:`${s.snd}  ${s.ex}`, c:s.c, pct:s.items.length/max*100, desc:`${s.items.length} verbos. ${s.rule}`}, [{id:"reg-"+s.id,t:"Ver la lista",n:s.items.length}])).join("");
+    const rules=`<div class="rules"><div class="rulebox"><h3>Cómo se escribe el pasado</h3><ul>${Object.values(RULES).map(r=>`<li><span class="badge">${r.lbl}</span><span>${r.txt} <em>${r.ex}</em></span></li>`).join("")}</ul>
+      <p>En inglés británico también se dobla la l: travelled, cancelled. En EE. UU.: traveled, canceled.</p></div>
+      <div class="rulebox"><h3>Por qué no hay "100.000 regulares"</h3><p>El inglés tiene varios miles de verbos y casi todos son regulares. Además, cada verbo nuevo que aparece también lo es: google → googled, text → texted, ghost → ghosted. Ninguna lista puede tenerlos todos.</p><p>Aquí están los ${regAll} más usados. Con las 5 reglas de escritura y los 3 sonidos puedes conjugar cualquier verbo regular, aunque no lo hayas visto antes.</p></div></div>`;
+    return `<div class="map">${cards}</div>${rules}`;
+  },
+  groups(q, mode){
+    const hp=mode==="past"||mode==="en", hi=mode==="en";
+    return REG.map(s=>{
+      const rows=s.items.filter(v=>!q||norm(v.inf+" "+v.past+" "+v.es).includes(q)); if(!rows.length) return "";
+      return {n:rows.length, html:`<article class="grp" id="reg-${s.id}" style="--c:var(${s.c})">
+        <header><h3>${s.t}</h3><span class="tag">${s.snd} · ${s.items.length}</span></header>
+        <div class="formula">${esc(s.ex)}</div><p class="tip">${s.rule}</p>
+        <div class="tblwrap"><table><thead><tr><th>Infinitivo</th><th>Pasado y participio</th><th>Español</th></tr></thead>
+        <tbody>${rows.map(v=>`<tr>${cell("v inf",hi,esc(v.inf))}${cell("v",hp,diff(v.inf,v.past)+` <span class="badge">${RULES[v.rule].lbl}</span>`)}<td class="es">${esc(v.es)}</td></tr>`).join("")}</tbody></table></div></article>`};
+    });
+  },
+  outro:""
+ },
+ up:{
+  tab:"Phrasal verbs con up", count:upAll, wide:true,
+  lede:"Un phrasal verb es verbo + partícula, y juntos significan algo nuevo. Con up es más fácil de lo que parece: casi siempre aporta una de cinco ideas, y solo unos pocos tienen significado propio. Están agrupados por esa idea, cada uno con su ejemplo.",
+  stats:[[upAll,"phrasal verbs"],[UP.length,"significados de up"]],
+  modes:[["none","Ver todo"],["es","Ocultar español"],["pv","Ocultar phrasal verb"]],
+  intro(){
+    const max=Math.max(...UP.map(g=>g.v.length));
+    return `<div class="map">${UP.map(g=>famCard({name:g.t, code:g.f, c:g.c, pct:g.v.length/max*100, desc:`${g.v.length} phrasal verbs. ${g.tip}`},[{id:g.id,t:"Ver la lista",n:g.v.length}])).join("")}</div>`;
+  },
+  groups(q, mode){
+    const he=mode==="es", hv=mode==="pv";
+    return UP.map(g=>{
+      const rows=g.v.filter(v=>!q||norm(v.join(" ")).includes(q)); if(!rows.length) return "";
+      return {n:rows.length, html:`<article class="grp" id="${g.id}" style="--c:var(${g.c})">
+        <header><h3>${g.t}</h3><span class="tag">${g.v.length}</span></header>
+        <div class="formula">${esc(g.f)}</div><p class="tip">${g.tip}</p>
+        <div class="tblwrap"><table><thead><tr><th>Phrasal verb</th><th>Español</th><th>Ejemplo</th></tr></thead>
+        <tbody>${rows.map(([pv,es,ex])=>`<tr>${cell("v inf",hv,esc(pv))}${cell("es",he,esc(es))}<td class="ex">${esc(ex).replace(/\bup\b( (with|for|to|on))?/g,m=>`<b>${m}</b>`)}</td></tr>`).join("")}</tbody></table></div></article>`};
+    });
+  },
+  outro:`<div class="note"><h3>Separables o no</h3><p>Muchos admiten el objeto en medio: <code>pick up the box</code> o <code>pick the box up</code>. Si el objeto es un pronombre, va siempre en medio: <code>pick it up</code>, nunca <code>pick up it</code>.</p><p>El verbo se conjuga normal: get up → got up, wake up → woke up, give up → gave up.</p></div>`
+ },
+ tarjetas:{
+  tab:"Tarjetas", count:"", custom:true,
+  lede:"Mira el frente, piensa la respuesta y toca la tarjeta para voltearla. Si la sabías, la verás menos; si no, vuelve pronto. Tu progreso se guarda solo en este dispositivo.",
+  stats:[], modes:[],
+  intro(){ return `<div class="fc">
+    <div><div class="card-wrap"><button type="button" class="card" id="fcCard" aria-live="polite"></button></div>
+      <div class="answer"><button type="button" class="no" id="fcNo" disabled>No la sabía</button><button type="button" class="yes" id="fcYes" disabled>La sabía</button></div></div>
+    <div class="fc-side">
+      <div class="panel"><h3>Qué estudiar</h3>
+        <label for="fcDeck" class="sr">Mazo</label>
+        <select id="fcDeck">
+          <option value="irr">Irregulares esenciales (${G.filter(g=>!FAM[g.fam].extra).reduce((n,g)=>n+g.v.length,0)})</option>
+          <option value="irrx">Irregulares opcionales (${G.filter(g=>FAM[g.fam].extra).reduce((n,g)=>n+g.v.length,0)})</option>
+          <option value="reg">Regulares (${REG.reduce((n,s)=>n+s.items.length,0)})</option>
+          <option value="up">Phrasal verbs con up (${UP.reduce((n,g)=>n+g.v.length,0)})</option>
+        </select>
+        <label><input type="checkbox" id="fcRev"> Al revés: ver el español primero</label>
+      </div>
+      <div class="panel"><h3>Tu progreso en este mazo</h3>
+        <div class="boxes" id="fcBoxes"></div>
+        <div id="fcReset"><button type="button" class="small-btn" id="fcResetBtn">Empezar este mazo de cero</button></div>
+      </div>
+    </div></div>`; },
+  outro:""
+ }
+};
+
+let view="irregulares", mode="none", query="";
+function setView(v){
+  view = VIEWS[v] ? v : "irregulares"; mode="none"; query=""; document.getElementById("q").value="";
+  const V=VIEWS[view];
+  document.getElementById("lede").textContent=V.lede;
+  document.getElementById("stats").innerHTML=V.stats.map(([n,l])=>`<span class="stat"><b>${n}</b>${l}</span>`).join("");
+  document.getElementById("tabs").innerHTML=Object.entries(VIEWS).map(([k,x])=>`<a href="#${k}"${k===view?' aria-current="page"':""}>${x.tab}${x.count!==""?`<small>${x.count}</small>`:""}</a>`).join("");
+  document.getElementById("intro").innerHTML=V.intro();
+  document.getElementById("outro").innerHTML=V.outro;
+  document.getElementById("modes").innerHTML=V.modes.map(([m,l],i)=>`<button type="button" data-mode="${m}" aria-pressed="${i===0}">${l}</button>`).join("");
+  document.getElementById("groups").className="groups"+(V.wide?" wide":"");
+  document.querySelector(".controls").style.display = V.custom ? "none" : "";
+  document.getElementById("groups").style.display = V.custom ? "none" : "";
+  if (V.custom) { fcInit(); return; }
+  render();
+}
+function render(){
+  const out=VIEWS[view].groups(norm(query.trim()), mode).filter(Boolean);
+  document.getElementById("groups").innerHTML = out.length ? out.map(o=>o.html).join("") : `<p class="empty">Nada coincide con "${esc(query)}". Prueba con otra palabra.</p>`;
+}
+document.addEventListener("click",e=>{
+  const td=e.target.closest("td.hidden"); if(td){td.classList.remove("hidden");return;}
+  const go=e.target.closest("[data-go]"); if(go){
+    if(query){query="";document.getElementById("q").value="";render();}
+    const el=document.getElementById(go.dataset.go);
+    if(el) el.scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth", block:"start"});
+    return;
+  }
+  const b=e.target.closest("#modes button"); if(b){
+    mode=b.dataset.mode;
+    document.querySelectorAll("#modes button").forEach(x=>x.setAttribute("aria-pressed",x===b));
+    render();
+  }
+});
+document.getElementById("q").addEventListener("input",e=>{query=e.target.value;render()});
+
+// ---------- Tarjetas (repetición espaciada sencilla, cajas de Leitner) ----------
+const BOXW=[16,16,8,4,2,1];
+function store(){ try{ return JSON.parse(localStorage.getItem("verbos-fc")||"{}"); }catch(e){ return {}; } }
+function save(s){ try{ localStorage.setItem("verbos-fc", JSON.stringify(s)); }catch(e){} }
+let FC={deck:"irr", rev:false, cur:null, last:null, flipped:false, mem:store()};
+function deckCards(d){
+  if(d==="irr"||d==="irrx") return G.filter(g=>!!FAM[g.fam].extra===(d==="irrx")).flatMap(g=>g.v.map(([i,p,pp,es,n])=>({id:d+":"+i, c:FAM[g.fam].c, kind:g.t, front:i, mid:`${p} · ${pp}`, es, note:n||"", ex:""})));
+  if(d==="reg") return REG.flatMap(s=>s.items.map(v=>({id:"reg:"+v.inf, c:s.c, kind:"Regular · la -ed suena "+s.snd, front:v.inf, mid:v.past, es:v.es, note:"", ex:""})));
+  return UP.flatMap(g=>g.v.map(([pv,es,ex])=>({id:"up:"+pv+":"+es, c:g.c, kind:g.t, front:pv, mid:"", es, note:"", ex})));
+}
+function fcPick(){
+  const cards=deckCards(FC.deck);
+  const pool=cards.length>1?cards.filter(c=>c.id!==FC.last):cards;
+  let tot=pool.reduce((n,c)=>n+BOXW[FC.mem[c.id]||0],0), r=Math.random()*tot;
+  for(const c of pool){ r-=BOXW[FC.mem[c.id]||0]; if(r<=0) return c; }
+  return pool[pool.length-1];
+}
+function fcShow(){
+  const c=FC.cur=fcPick(); FC.flipped=false;
+  const card=document.getElementById("fcCard"); card.classList.remove("flipped"); card.style.setProperty("--c",`var(${c.c})`);
+  const front = FC.rev
+    ? `<span class="kind">${esc(c.kind)}</span><span class="big" style="font-size:clamp(1.6rem,5vw,2.6rem)">${esc(c.es)}</span><span class="tap">¿Cómo se dice en inglés? Toca para ver.</span>`
+    : `<span class="kind">${esc(c.kind)}</span><span class="big">${esc(c.front)}</span><span class="tap">${c.mid?"¿Pasado y participio? ":"¿Qué significa? "}Toca para ver.</span>`;
+  const back = `<span class="kind">${esc(c.kind)}</span><span class="big" style="font-size:clamp(1.8rem,5vw,2.8rem)">${esc(c.front)}</span>${c.mid?`<span class="mid">${esc(c.mid)}</span>`:""}<span class="es">${esc(c.es)}</span>${c.ex?`<span class="ex">${esc(c.ex)}</span>`:""}${c.note?`<span class="tap">${esc(c.note)}</span>`:""}`;
+  card.innerHTML=`<span class="face front">${front}</span><span class="face back">${back}</span>`;
+  card.setAttribute("aria-label","Tarjeta. Toca para voltear.");
+  document.getElementById("fcYes").disabled=true; document.getElementById("fcNo").disabled=true;
+  fcStats();
+}
+function fcFlip(){
+  FC.flipped=!FC.flipped; document.getElementById("fcCard").classList.toggle("flipped",FC.flipped);
+  if(FC.flipped){ document.getElementById("fcYes").disabled=false; document.getElementById("fcNo").disabled=false; }
+}
+function fcAnswer(ok){
+  if(!FC.flipped) return;
+  const b=FC.mem[FC.cur.id]||0; FC.mem[FC.cur.id]= ok ? Math.min(5,b+1) : 1; save(FC.mem);
+  FC.last=FC.cur.id; fcShow();
+}
+function fcStats(){
+  const cards=deckCards(FC.deck), cnt=[0,0,0,0];
+  cards.forEach(c=>{ const b=FC.mem[c.id]||0; cnt[b===0?0:b<=2?1:b<=4?2:3]++; });
+  document.getElementById("fcBoxes").innerHTML=[["Nuevas",cnt[0]],["Aprendiendo",cnt[1]],["Repasando",cnt[2]],["Dominadas",cnt[3]]].map(([l,n])=>`<div><b>${n}</b><span>${l}</span></div>`).join("");
+}
+function fcResetUI(confirming){
+  document.getElementById("fcReset").innerHTML = confirming
+    ? `<div class="confirm">¿Borrar el progreso de este mazo? <button type="button" class="small-btn" id="fcResetYes">Sí, borrar</button><button type="button" class="small-btn" id="fcResetNo">Cancelar</button></div>`
+    : `<button type="button" class="small-btn" id="fcResetBtn">Empezar este mazo de cero</button>`;
+}
+function fcInit(){
+  FC.mem=store(); FC.last=null;
+  document.getElementById("fcDeck").value=FC.deck; document.getElementById("fcRev").checked=FC.rev;
+  fcShow();
+}
+document.addEventListener("click",e=>{
+  if(e.target.closest("#fcCard")) return fcFlip();
+  if(e.target.closest("#fcYes")) return fcAnswer(true);
+  if(e.target.closest("#fcNo")) return fcAnswer(false);
+  if(e.target.closest("#fcResetBtn")) return fcResetUI(true);
+  if(e.target.closest("#fcResetNo")) return fcResetUI(false);
+  if(e.target.closest("#fcResetYes")){ deckCards(FC.deck).forEach(c=>delete FC.mem[c.id]); save(FC.mem); fcResetUI(false); fcShow(); }
+});
+document.addEventListener("change",e=>{
+  if(e.target.id==="fcDeck"){ FC.deck=e.target.value; FC.last=null; fcShow(); }
+  if(e.target.id==="fcRev"){ FC.rev=e.target.checked; fcShow(); }
+});
+window.addEventListener("hashchange",()=>setView(location.hash.slice(1)));
+setView(location.hash.slice(1));
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => { navigator.serviceWorker.register("sw.js").catch(()=>{}); });
+}
+</script>
+</body>
+</html>
