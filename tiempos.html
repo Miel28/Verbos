@@ -155,7 +155,7 @@ const T = [
   form:{pos:"I've worked · She's worked", neg:"I haven't worked · She hasn't worked", q:"Have you worked? · Has she worked?"},
   rule:"have / has + participio",
   uses:["Experiencias, sin decir cuándo (ever, never)","Una acción pasada con resultado ahora","Periodos que no han terminado (today, this week, this year)","Estados que empezaron antes y siguen (for, since)"],
-  ex:["I've never been to Japan.","She's lost her keys. (Todavía no las encuentra.)","We've known each other since 2015."],
+  ex:["I've never been to Japan.","She's lost her keys.","We've known each other since 2015."],
   signals:["ever","never","already","yet","just","so far","recently","since","for","How long…?"],
   discard:["¿Hay un momento pasado terminado (yesterday, last week, in 2019, ago, When…?)? Entonces es pasado simple.","¿Importa la duración de una actividad que sigue? Mira el presente perfecto continuo."],
   mistake:{bad:"I have seen him yesterday.", good:"I saw him yesterday.", why:"yesterday es un momento terminado: pide pasado simple."}},
@@ -268,6 +268,10 @@ const T = [
   mistake:{bad:"She said she will come.", good:"She said she would come.", why:"En estilo indirecto en pasado, will pasa a would."}}
 ];
 
+// Traducción de los ejemplos, en el mismo orden
+const EX_ES = {"pres-simple": ["Trabaja en un hospital.", "El agua hierve a 100 °C.", "El tren sale mañana a las 7:15."], "pres-cont": ["Estoy estudiando ahora mismo.", "Este mes está viviendo con su tía.", "Nos vamos a ver con Ana el viernes."], "pres-perf": ["Nunca he ido a Japón.", "Perdió sus llaves y todavía no las encuentra.", "Nos conocemos desde 2015."], "pres-perf-cont": ["Llevo 40 minutos esperando.", "Ha estado lloviendo toda la mañana.", "Estás mojado. ¿Has estado corriendo?"], "past-simple": ["Nos mudamos a Cali en 2018.", "Abrió la puerta, prendió la luz y gritó.", "Caminaba al colegio todos los días."], "past-cont": ["A las 9 p. m. estaba cenando.", "Estaba cocinando cuando sonó el teléfono.", "Mientras ella leía, él veía televisión."], "past-perf": ["Cuando llegué, el tren ya había salido.", "Nunca había visto nieve antes de ese viaje.", "No pude pagar porque había perdido la billetera."], "past-perf-cont": ["Llevábamos seis horas manejando cuando el carro se varó.", "Tenía los ojos rojos: había estado llorando.", "Estaba cansada porque había estado trabajando todo el día."], "fut-simple": ["Está sonando el teléfono. —¡Yo contesto!", "Creo que lloverá más tarde.", "Te prometo que te ayudaré."], "fut-cont": ["Mañana a esta hora estaré volando a Madrid.", "No llames a las 8: estaré acostando a los niños.", "¿Vas a venir a la reunión?"], "fut-perf": ["Para 2030 ya habré terminado mi carrera.", "Para cuando llegues, ya habremos comido.", "¿Lo habrás leído para el lunes?"], "fut-perf-cont": ["En junio cumpliré diez años trabajando aquí.", "En mayo cumpliremos dos años viviendo en Medellín."], "going-to": ["Voy a estudiar medicina el próximo año.", "¡Mira esas nubes! Va a llover.", "Va a tener un bebé."], "pres-fut": ["Tengo cita con el dentista el martes.", "La película empieza a las 8 esta noche.", "Te llamo cuando llegue a casa."], "used-to": ["Antes vivía en Bogotá.", "Cuando éramos niños, jugábamos en la calle todas las tardes.", "Antes no le gustaba el café."], "fut-past": ["Te iba a llamar, pero se me olvidó.", "Prometió que ayudaría.", "Dijo que vendría a las seis."]};
+T.forEach(t=>t.ex_es=EX_ES[t.id]);
+
 // Cómo reconocer un tiempo por sus auxiliares
 const DECODER = [
   ["do / does / did + verbo base", "Simple (presente o pasado)"],
@@ -379,7 +383,7 @@ function tenseCard(t){
     <header><div><h3>${esc(t.en)}</h3><span class="es">${esc(t.es)}</span></div><span class="tag">${esc(t.asp)}</span></header>
     <div class="formula"><b>${esc(t.rule)}</b><span>+ ${esc(t.form.pos)}</span><span>− ${esc(t.form.neg)}</span><span>? ${esc(t.form.q)}</span></div>
     <div><p class="lbl">Cuándo se usa</p><ul>${t.uses.map(u=>`<li>${esc(u)}</li>`).join("")}</ul></div>
-    <div><p class="lbl">Ejemplos</p><ul>${t.ex.map(x=>`<li class="ex">${esc(x)}</li>`).join("")}</ul></div>
+    <div><p class="lbl">Ejemplos</p><ul>${t.ex.map((x,i)=>`<li><span class="ex">${esc(x)}</span><br><span style="color:var(--muted)">${esc(t.ex_es[i])}</span></li>`).join("")}</ul></div>
     <div><p class="lbl">Palabras que lo delatan</p><div class="pills">${t.signals.map(s=>`<span class="pill">${esc(s)}</span>`).join("")}</div></div>
     <div><p class="lbl">Cómo descartarlo</p><ul>${t.discard.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
     <div class="err"><p class="bad">${esc(t.mistake.bad)}</p><p class="good">${esc(t.mistake.good)}</p><p class="why">${esc(t.mistake.why)}</p></div>
