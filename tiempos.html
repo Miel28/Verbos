@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Verbos">
+<meta name="theme-color" content="#1a1d33">
+<title>Tiempos verbales en inglés</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+/* Plan: tres vistas (Aprender, Comparar, Practicar). Aprender = mapa + detector + una tarjeta por tiempo; Practicar = una pregunta a la vez con corrección. */
+:root{
+  --bg:#f4f5f9; --surface:#ffffff; --ink:#1a1d33; --muted:#5d6280; --line:#dfe2ec; --soft:#eef0f7;
+  --c-pres:#0f8a7e; --c-past:#3b4cca; --c-fut:#c0306b; --c-extra:#b4630a;
+  --ok:#0f8a7e; --bad:#c0306b;
+  --f-display:"Bricolage Grotesque","Segoe UI",system-ui,sans-serif;
+  --f-body:"Source Sans 3","Segoe UI",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#11131f; --surface:#1a1d2d; --ink:#eceefa; --muted:#a2a7c4; --line:#2c3048; --soft:#232740;
+    --c-pres:#3cc7b8; --c-past:#8b97ff; --c-fut:#f2709f; --c-extra:#f2a54a; --ok:#3cc7b8; --bad:#f2709f; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#11131f; --surface:#1a1d2d; --ink:#eceefa; --muted:#a2a7c4; --line:#2c3048; --soft:#232740;
+  --c-pres:#3cc7b8; --c-past:#8b97ff; --c-fut:#f2709f; --c-extra:#f2a54a; --ok:#3cc7b8; --bad:#f2709f; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 20px 80px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.15}
+h1{font-size:clamp(2rem,5vw,3.1rem);font-weight:800;letter-spacing:-.02em}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.back{font-weight:700;color:var(--c-past);text-decoration:none;border:1px solid var(--line);background:var(--surface);padding:8px 14px;border-radius:10px}
+.lede{max-width:65ch;color:var(--muted);margin:10px 0 0}
+.tabs{display:flex;gap:6px;margin-top:22px;border-bottom:2px solid var(--line);flex-wrap:wrap}
+.tabs a{font-family:var(--f-display);font-weight:700;font-size:1.05rem;text-decoration:none;color:var(--muted);padding:10px 16px;border-radius:10px 10px 0 0;margin-bottom:-2px;border:2px solid transparent}
+.tabs a[aria-current="page"]{color:var(--ink);background:var(--surface);border-color:var(--line);border-bottom-color:var(--surface)}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--c-past);outline-offset:2px}
+.section{margin-top:28px;display:flex;flex-direction:column;gap:16px}
+.section > h2{font-size:1.6rem}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px 22px}
+.tblwrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+th small{display:block;text-transform:none;letter-spacing:0;font-size:.8rem}
+td.mono,.mono{font-family:var(--f-mono)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.pills{display:flex;flex-wrap:wrap;gap:8px}
+.pill{font-family:var(--f-mono);font-weight:700;font-size:.9rem;background:var(--soft);border-radius:999px;padding:4px 12px}
+.jump{display:flex;flex-wrap:wrap;gap:8px}
+.jump a{text-decoration:none;font-weight:700;color:var(--ink);border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 14px;border-left:6px solid var(--c)}
+.tenses{display:grid;grid-template-columns:repeat(auto-fill,minmax(520px,1fr));gap:18px}
+.tense{background:var(--surface);border:1px solid var(--line);border-top:8px solid var(--c);border-radius:18px;padding:22px 24px;display:flex;flex-direction:column;gap:14px;scroll-margin-top:20px}
+.tense header{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.tense h3{font-size:1.5rem}
+.tense .es{color:var(--muted);font-weight:600}
+.tag{font-family:var(--f-mono);font-size:.75rem;font-weight:700;color:var(--c);border:1px solid var(--c);border-radius:999px;padding:2px 10px}
+.lbl{font-family:var(--f-mono);font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--c);margin:0 0 4px}
+.formula{background:var(--soft);border-radius:12px;padding:12px 14px;display:flex;flex-direction:column;gap:4px}
+.formula b{font-family:var(--f-body)}
+.formula span{font-family:var(--f-mono);font-size:.95rem}
+.tense ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px}
+.ex{font-style:italic}
+.err{display:grid;grid-template-columns:1fr 1fr;gap:10px;border:1px dashed var(--line);border-radius:12px;padding:12px 14px}
+.err .bad{font-family:var(--f-mono);text-decoration:line-through;color:var(--muted)}
+.err .good{font-family:var(--f-mono);font-weight:700}
+.err p{margin:0}
+.err .why{grid-column:1/-1;color:var(--muted);font-size:.95rem}
+.pair{display:flex;flex-direction:column;gap:10px}
+.pair h3{font-size:1.25rem}
+.pair .vs{color:var(--muted)}
+.pair .exs{background:var(--soft);border-radius:12px;padding:10px 14px;font-family:var(--f-mono);font-size:.95rem;display:flex;flex-direction:column;gap:4px}
+/* Practicar */
+.prac{max-width:760px;margin:24px auto 0;display:flex;flex-direction:column;gap:16px}
+.setup{display:flex;flex-direction:column;gap:14px}
+.setup .row{display:flex;flex-wrap:wrap;gap:10px}
+.choice{font:inherit;font-weight:700;padding:12px 16px;border-radius:12px;border:2px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.choice[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:var(--bg)}
+.big-btn{font:inherit;font-weight:800;font-size:1.15rem;padding:16px 20px;border-radius:14px;border:0;background:var(--ink);color:var(--bg);cursor:pointer}
+.big-btn.alt{background:transparent;color:var(--ink);border:2px solid var(--line)}
+.big-btn:disabled{opacity:.4;cursor:not-allowed}
+.prog{height:12px;border-radius:6px;background:var(--soft);overflow:hidden}
+.prog i{display:block;height:100%;background:var(--ok);transition:width .3s}
+.qkind{font-family:var(--f-mono);font-size:.75rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.qtext{font-family:var(--f-display);font-size:clamp(1.3rem,3.6vw,1.8rem);font-weight:700;line-height:1.3;margin:0}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opts button{font:inherit;font-family:var(--f-mono);font-weight:700;font-size:1rem;text-align:left;padding:14px 16px;border-radius:12px;border:2px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.opts.long{grid-template-columns:1fr}
+.opts button:disabled{cursor:default}
+.opts button.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 14%,transparent)}
+.opts button.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 14%,transparent)}
+.typein{display:flex;gap:10px;flex-wrap:wrap}
+.typein input{flex:1 1 240px;font:inherit;font-family:var(--f-mono);font-size:1.15rem;padding:12px 14px;border-radius:12px;border:2px solid var(--line);background:var(--surface);color:var(--ink)}
+.typein button{font:inherit;font-weight:700;padding:12px 18px;border-radius:12px;border:0;background:var(--ink);color:var(--bg);cursor:pointer}
+.fb{border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.fb.ok{background:color-mix(in srgb,var(--ok) 15%,transparent)}
+.fb.bad{background:color-mix(in srgb,var(--bad) 15%,transparent)}
+.fb p{margin:0}
+.fb .row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.fb a{color:inherit;font-weight:700}
+.fb button{font:inherit;font-weight:800;padding:12px 18px;border-radius:12px;border:0;background:var(--ink);color:var(--bg);cursor:pointer}
+.score{font-family:var(--f-display);font-size:3rem;font-weight:800;line-height:1}
+.miss{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+@media (max-width:640px){.two,.err{grid-template-columns:1fr}.tenses{grid-template-columns:1fr}.opts{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><h1>Tiempos verbales en inglés</h1><a class="back" href="./">← Volver a Verbos</a></div>
+  <p class="lede" id="lede"></p>
+  <nav class="tabs" id="tabs" aria-label="Secciones"></nav>
+  <main id="view"></main>
+</div>
+<script>
+// Tiempos verbales del inglés: contenido único para la presentación y la página interactiva.
+const GRUPOS = {
+  presente:{name:"Presente", c:"#0F8A7E"},
+  pasado:{name:"Pasado", c:"#3B4CCA"},
+  futuro:{name:"Futuro", c:"#C0306B"},
+  extra:{name:"Otras formas de futuro y pasado", c:"#B4630A"}
+};
+
+const T = [
+ {id:"pres-simple", grp:"presente", en:"Present simple", es:"Presente simple", asp:"Simple",
+  form:{pos:"I work · She works", neg:"I don't work · She doesn't work", q:"Do you work? · Does she work?"},
+  rule:"Sujeto + verbo (con -s en he/she/it)",
+  uses:["Hábitos y rutinas","Verdades generales y hechos científicos","Horarios fijos, aunque sean futuros (trenes, clases, películas)","Estados: know, like, want, belong, need…"],
+  ex:["She works in a hospital.","Water boils at 100 °C.","The train leaves at 7:15 tomorrow."],
+  signals:["always","usually","often","sometimes","never","every day","on Mondays","once a week"],
+  discard:["¿Está pasando justo ahora o es algo temporal? Entonces es presente continuo.","¿Conecta el pasado con el ahora (for, since)? Entonces es presente perfecto."],
+  mistake:{bad:"He don't like coffee.", good:"He doesn't like coffee.", why:"Con he/she/it se usa doesn't, y el verbo va sin -s."}},
+ {id:"pres-cont", grp:"presente", en:"Present continuous", es:"Presente continuo", asp:"Continuo",
+  form:{pos:"I'm working · She's working", neg:"I'm not working · She isn't working", q:"Are you working? · Is she working?"},
+  rule:"am / is / are + verbo-ing",
+  uses:["Lo que pasa en este momento","Situaciones temporales","Cambios que están ocurriendo","Planes ya acordados (futuro)","Quejas con always: You're always losing your keys!"],
+  ex:["I'm studying right now.","She's living with her aunt this month.","We're meeting Ana on Friday."],
+  signals:["now","right now","at the moment","currently","these days","this week","Look!","Listen!"],
+  discard:["Los verbos de estado (know, want, like, believe, belong) no van en continuo: I know, no I'm knowing.","¿Es una rutina permanente? Entonces es presente simple."],
+  mistake:{bad:"I'm wanting a coffee.", good:"I want a coffee.", why:"want es un verbo de estado: no se usa en continuo."}},
+ {id:"pres-perf", grp:"presente", en:"Present perfect", es:"Presente perfecto", asp:"Perfecto",
+  form:{pos:"I've worked · She's worked", neg:"I haven't worked · She hasn't worked", q:"Have you worked? · Has she worked?"},
+  rule:"have / has + participio",
+  uses:["Experiencias, sin decir cuándo (ever, never)","Una acción pasada con resultado ahora","Periodos que no han terminado (today, this week, this year)","Estados que empezaron antes y siguen (for, since)"],
+  ex:["I've never been to Japan.","She's lost her keys. (Todavía no las encuentra.)","We've known each other since 2015."],
+  signals:["ever","never","already","yet","just","so far","recently","since","for","How long…?"],
+  discard:["¿Hay un momento pasado terminado (yesterday, last week, in 2019, ago, When…?)? Entonces es pasado simple.","¿Importa la duración de una actividad que sigue? Mira el presente perfecto continuo."],
+  mistake:{bad:"I have seen him yesterday.", good:"I saw him yesterday.", why:"yesterday es un momento terminado: pide pasado simple."}},
+ {id:"pres-perf-cont", grp:"presente", en:"Present perfect continuous", es:"Presente perfecto continuo", asp:"Perfecto continuo",
+  form:{pos:"I've been working · She's been working", neg:"I haven't been working", q:"Have you been working?"},
+  rule:"have / has been + verbo-ing",
+  uses:["Una actividad que empezó antes y sigue ahora (cuánto tiempo lleva)","Una actividad reciente que deja huella visible"],
+  ex:["I've been waiting for 40 minutes.","It's been raining all morning.","You're wet. Have you been running?"],
+  signals:["for","since","How long…?","all day","all morning","lately","recently"],
+  discard:["¿Importa el resultado o la cantidad (three emails, how many)? Entonces es presente perfecto simple.","Con verbos de estado se usa el perfecto simple: I've known her for years."],
+  mistake:{bad:"I've been knowing her for years.", good:"I've known her for years.", why:"know es un verbo de estado."}},
+
+ {id:"past-simple", grp:"pasado", en:"Past simple", es:"Pasado simple", asp:"Simple",
+  form:{pos:"I worked · I went", neg:"I didn't work · I didn't go", q:"Did you work? · Did you go?"},
+  rule:"verbo + -ed, o la 2.ª forma del irregular",
+  uses:["Acciones terminadas en un momento pasado concreto","Una secuencia de acciones","Hábitos y situaciones del pasado"],
+  ex:["We moved to Cali in 2018.","She opened the door, turned on the light and screamed.","I walked to school every day."],
+  signals:["yesterday","last week","ago","in 2010","when I was a child","then","When…?"],
+  discard:["¿No hay un momento terminado y la acción toca el presente? Entonces es presente perfecto.","¿Es una acción en progreso, de fondo? Entonces es pasado continuo.","¿Pasó antes que otra acción pasada? Mira el pasado perfecto."],
+  mistake:{bad:"Did you went to the party?", good:"Did you go to the party?", why:"Después de did, el verbo va en su forma base."}},
+ {id:"past-cont", grp:"pasado", en:"Past continuous", es:"Pasado continuo", asp:"Continuo",
+  form:{pos:"I was working · They were working", neg:"I wasn't working", q:"Were you working?"},
+  rule:"was / were + verbo-ing",
+  uses:["Una acción en progreso en un momento pasado","La acción de fondo que otra interrumpe (when + pasado simple)","Dos acciones al mismo tiempo (while)","Ambientar una historia"],
+  ex:["At 9 p.m. I was having dinner.","I was cooking when the phone rang.","While she was reading, he was watching TV."],
+  signals:["while","when","at 8 p.m. yesterday","all evening","at that moment"],
+  discard:["¿Es la acción corta que interrumpe? Esa va en pasado simple.","¿Es una acción completa, de principio a fin? Entonces es pasado simple."],
+  mistake:{bad:"When I was arriving, they were eating.", good:"When I arrived, they were eating.", why:"La acción corta que interrumpe va en pasado simple."}},
+ {id:"past-perf", grp:"pasado", en:"Past perfect", es:"Pasado perfecto (pluscuamperfecto)", asp:"Perfecto",
+  form:{pos:"I'd worked · She'd left", neg:"I hadn't worked", q:"Had you worked?"},
+  rule:"had + participio",
+  uses:["Una acción anterior a otra acción pasada: el pasado del pasado","Estilo indirecto: He said he had finished.","Condicional tipo 3: If I had known…"],
+  ex:["When I arrived, the train had already left.","She had never seen snow before that trip.","I couldn't pay because I'd lost my wallet."],
+  signals:["before","after","already","by the time","never… before","when (con orden de acciones)"],
+  discard:["¿Cuentas las acciones en el orden en que pasaron? Basta con pasado simple: I ate and left.","¿No hay otra acción pasada de referencia? Entonces no hace falta: usa pasado simple."],
+  mistake:{bad:"I had gone to the cinema yesterday.", good:"I went to the cinema yesterday.", why:"No hay otra acción pasada que sirva de referencia."}},
+ {id:"past-perf-cont", grp:"pasado", en:"Past perfect continuous", es:"Pasado perfecto continuo", asp:"Perfecto continuo",
+  form:{pos:"I'd been working", neg:"I hadn't been working", q:"Had you been working?"},
+  rule:"had been + verbo-ing",
+  uses:["Cuánto tiempo llevaba una actividad hasta un momento pasado","La causa de una situación pasada"],
+  ex:["We had been driving for six hours when the car broke down.","His eyes were red; he had been crying.","She was tired because she'd been working all day."],
+  signals:["for","since","How long…?","before","until","when"],
+  discard:["¿No hay un momento pasado de referencia? Entonces es presente perfecto continuo.","Con verbos de estado se usa el pasado perfecto: I had known him for years."],
+  mistake:{bad:"I had been knowing him for years.", good:"I had known him for years.", why:"know es un verbo de estado."}},
+
+ {id:"fut-simple", grp:"futuro", en:"Future simple (will)", es:"Futuro simple", asp:"Simple",
+  form:{pos:"I'll work · She'll work", neg:"I won't work", q:"Will you work?"},
+  rule:"will + verbo base",
+  uses:["Decisiones tomadas en el momento","Predicciones basadas en opinión (I think…, probably)","Promesas, ofrecimientos, amenazas","Hechos futuros"],
+  ex:["The phone's ringing. — I'll get it!","I think it will rain later.","I promise I'll help you."],
+  signals:["I think","probably","I'm sure","maybe","tomorrow","next week","I promise"],
+  discard:["¿Ya estaba decidido antes de hablar? Entonces es going to.","¿Hay evidencia que se ve ahora? Entonces es going to.","¿Está acordado con otra persona, con fecha? Entonces es presente continuo.","Después de when, if, as soon as o before va presente, no will."],
+  mistake:{bad:"When I will arrive, I'll call you.", good:"When I arrive, I'll call you.", why:"Después de when se usa presente aunque hables del futuro."}},
+ {id:"fut-cont", grp:"futuro", en:"Future continuous", es:"Futuro continuo", asp:"Continuo",
+  form:{pos:"I'll be working", neg:"I won't be working", q:"Will you be working?"},
+  rule:"will be + verbo-ing",
+  uses:["Una acción en progreso en un momento futuro","Algo que pasará como parte normal de las cosas","Preguntar con cortesía por planes: Will you be using the car tonight?"],
+  ex:["This time tomorrow I'll be flying to Madrid.","Don't call at 8; I'll be putting the kids to bed.","Will you be coming to the meeting?"],
+  signals:["this time tomorrow","at 8 p.m. next Monday","this time next week","all day tomorrow"],
+  discard:["¿La acción ya habrá terminado en ese momento? Entonces es futuro perfecto."],
+  mistake:{bad:"At 10 tomorrow I will study.", good:"At 10 tomorrow I'll be studying.", why:"A esa hora la acción estará en progreso."}},
+ {id:"fut-perf", grp:"futuro", en:"Future perfect", es:"Futuro perfecto", asp:"Perfecto",
+  form:{pos:"I'll have worked · I'll have finished", neg:"I won't have finished", q:"Will you have finished?"},
+  rule:"will have + participio",
+  uses:["Algo que ya estará terminado antes de un momento futuro"],
+  ex:["By 2030, I'll have finished my degree.","By the time you arrive, we'll have eaten.","Will you have read it by Monday?"],
+  signals:["by","by the time","by then","by the end of","before"],
+  discard:["¿La acción estará en progreso, sin terminar, en ese momento? Entonces es futuro continuo.","¿Importa cuánto tiempo llevará la actividad (for)? Mira el futuro perfecto continuo."],
+  mistake:{bad:"By next year I will have finish.", good:"By next year I will have finished.", why:"Después de have va el participio."}},
+ {id:"fut-perf-cont", grp:"futuro", en:"Future perfect continuous", es:"Futuro perfecto continuo", asp:"Perfecto continuo",
+  form:{pos:"I'll have been working", neg:"I won't have been working", q:"Will you have been working?"},
+  rule:"will have been + verbo-ing",
+  uses:["Cuánto tiempo llevará una actividad al llegar un momento futuro"],
+  ex:["By June, I'll have been working here for ten years.","In May, we'll have been living in Medellín for two years."],
+  signals:["for + by…","by the end of… for…","in (fecha)… for…"],
+  discard:["¿No hay duración (for)? Entonces es futuro perfecto."],
+  mistake:{bad:"By May I'll have been live here for two years.", good:"By May I'll have been living here for two years.", why:"Después de been va el verbo con -ing."}},
+
+ {id:"going-to", grp:"extra", en:"Be going to", es:"Ir a + infinitivo", asp:"Futuro",
+  form:{pos:"I'm going to study", neg:"I'm not going to study", q:"Are you going to study?"},
+  rule:"am / is / are going to + verbo base",
+  uses:["Planes e intenciones decididos antes de hablar","Predicciones con evidencia que se ve ahora"],
+  ex:["I'm going to study medicine next year.","Look at those clouds! It's going to rain.","She's going to have a baby."],
+  signals:["planes ya decididos","Look!","evidencia presente"],
+  discard:["¿Lo decides justo al hablar? Entonces es will.","¿Es una cita acordada con fecha y otra persona? Suena más natural el presente continuo."],
+  mistake:{bad:"I'm going to studying tonight.", good:"I'm going to study tonight.", why:"Después de going to va el verbo base."}},
+ {id:"pres-fut", grp:"extra", en:"Present tenses for the future", es:"Presente con valor de futuro", asp:"Futuro",
+  form:{pos:"I'm seeing the dentist on Tuesday · The film starts at 8", neg:"I'm not working tomorrow", q:"What time does the class start?"},
+  rule:"Presente continuo para planes acordados; presente simple para horarios y después de when, if, as soon as",
+  uses:["Citas y planes acordados: presente continuo","Horarios y calendarios oficiales: presente simple","Después de when, if, before, after, until, as soon as: presente simple"],
+  ex:["I'm seeing the dentist on Tuesday.","The film starts at 8 tonight.","I'll call you when I get home."],
+  signals:["fecha y hora concretas","horarios","when / if / as soon as"],
+  discard:["¿Es una predicción u opinión? Entonces es will.","¿Es una intención sin cita concreta? Entonces es going to."],
+  mistake:{bad:"As soon as I will finish, I'll call you.", good:"As soon as I finish, I'll call you.", why:"Después de as soon as se usa presente."}},
+ {id:"used-to", grp:"extra", en:"Used to / would", es:"Solía… / hábitos del pasado", asp:"Pasado",
+  form:{pos:"I used to live there · We would play outside", neg:"I didn't use to like it", q:"Did you use to play?"},
+  rule:"used to + verbo base · would + verbo base",
+  uses:["used to: hábitos y estados del pasado que ya no existen","would: acciones repetidas del pasado, nunca estados"],
+  ex:["I used to live in Bogotá.","When we were kids, we would play in the street every afternoon.","She didn't use to like coffee."],
+  signals:["when I was a child","back then","in those days"],
+  discard:["be used to + -ing significa estar acostumbrado (I'm used to waking up early). No es lo mismo que used to.","would no sirve para estados: I used to have a dog, no I would have a dog."],
+  mistake:{bad:"I'm used to wake up early.", good:"I'm used to waking up early.", why:"be used to va seguido de verbo con -ing."}},
+ {id:"fut-past", grp:"extra", en:"Future in the past", es:"Futuro en el pasado", asp:"Pasado",
+  form:{pos:"I was going to call · She said she would come", neg:"I wasn't going to tell you", q:"Were you going to call me?"},
+  rule:"was / were going to + verbo base · would + verbo base",
+  uses:["Planes del pasado que no se cumplieron","Estilo indirecto: lo que alguien dijo que haría"],
+  ex:["I was going to call you, but I forgot.","He promised he would help.","She said she would come at six."],
+  signals:["but…","said / promised / thought + would"],
+  discard:["Si lo cuentas desde el pasado, will pasa a would: She said she will come es incorrecto."],
+  mistake:{bad:"She said she will come.", good:"She said she would come.", why:"En estilo indirecto en pasado, will pasa a would."}}
+];
+
+// Cómo reconocer un tiempo por sus auxiliares
+const DECODER = [
+  ["do / does / did + verbo base", "Simple (presente o pasado)"],
+  ["am / is / are + -ing", "Presente continuo"],
+  ["was / were + -ing", "Pasado continuo"],
+  ["have / has + participio", "Presente perfecto"],
+  ["have / has been + -ing", "Presente perfecto continuo"],
+  ["had + participio", "Pasado perfecto"],
+  ["had been + -ing", "Pasado perfecto continuo"],
+  ["will + verbo base", "Futuro simple"],
+  ["will be + -ing", "Futuro continuo"],
+  ["will have + participio", "Futuro perfecto"],
+  ["will have been + -ing", "Futuro perfecto continuo"]
+];
+const ASPECTS = [
+  ["Simple","El hecho, sin más","work · worked · will work"],
+  ["Continuo","Acción en progreso","be + -ing"],
+  ["Perfecto","Terminada antes de un punto","have + participio"],
+  ["Perfecto continuo","Duración hasta un punto","have been + -ing"]
+];
+const STATIVE = ["know","believe","understand","remember","like","love","hate","prefer","want","need","belong","own","seem","mean"];
+
+// Pares que confunden: cómo descartar uno u otro
+const PAIRS = [
+  {a:"Present simple", b:"Present continuous", test:"¿Es rutina o permanente (simple), o está pasando ahora o por un tiempo (continuo)?", ea:"I work in a bank.", eb:"I'm working from home this week."},
+  {a:"Present perfect", b:"Past simple", test:"¿Dices cuándo, con un momento terminado? Pasado simple. ¿Sin fecha, o con conexión al ahora? Presente perfecto.", ea:"I've lost my phone. (Sigue perdido.)", eb:"I lost my phone last year."},
+  {a:"Present perfect", b:"Present perfect continuous", test:"¿Importa el resultado o cuántos (perfecto), o la actividad y su duración (continuo)?", ea:"I've written three emails.", eb:"I've been writing emails all morning."},
+  {a:"Past simple", b:"Past continuous", test:"¿Acción completa o que interrumpe (simple), o acción de fondo en progreso (continuo)?", ea:"The phone rang.", eb:"I was cooking when the phone rang."},
+  {a:"Past simple", b:"Past perfect", test:"¿Una acción pasó antes que otra que ya estás contando en pasado? La anterior va en pasado perfecto.", ea:"When I arrived, the film started. (Empezó al llegar.)", eb:"When I arrived, the film had started. (Ya había empezado.)"},
+  {a:"will", b:"going to / presente continuo", test:"¿Lo decides ahora (will), ya lo habías decidido (going to), o está acordado con fecha (presente continuo)?", ea:"I'll call her now.", eb:"I'm going to call her tonight. / I'm meeting her at 5."},
+  {a:"Future continuous", b:"Future perfect", test:"En ese momento futuro, ¿la acción estará en progreso (continuo) o ya terminada (perfecto)?", ea:"At 9 I'll be having dinner.", eb:"By 9 I'll have had dinner."},
+  {a:"used to", b:"be used to / would", test:"used to = antes sí, ahora no. be used to + -ing = estar acostumbrado. would = acciones repetidas, nunca estados.", ea:"I used to smoke.", eb:"I'm used to working late. / We would go fishing on Sundays."}
+];
+
+// Ejercicios difíciles. type: "choose" (opts, ans) o "fill" (ans = respuestas aceptadas)
+const EX = [
+ {t:"pres-perf", type:"choose", q:"I ___ here since 2019, and I still love it.", opts:["live","lived","have lived","am living"], ans:"have lived", why:"since + una situación que sigue hasta hoy pide presente perfecto."},
+ {t:"past-perf", type:"choose", q:"When I got to the station, the train ___, so I had to wait an hour for the next one.", opts:["left","had left","has left","leaves"], ans:"had left", why:"El tren salió antes de que yo llegara: el pasado del pasado."},
+ {t:"going-to", type:"choose", q:"Look at those black clouds. It ___.", opts:["will rain","is going to rain","rains","is raining"], ans:"is going to rain", why:"Hay evidencia que se ve ahora: going to."},
+ {t:"fut-simple", type:"choose", q:"— We don't have any milk. — Oh, really? I ___ some.", opts:["'ll buy","'m going to buy","buy","'m buying"], ans:"'ll buy", why:"Decisión tomada en el momento: will."},
+ {t:"past-perf-cont", type:"choose", q:"She ___ for three hours when she finally found the mistake.", opts:["had been working","has been working","was working","worked"], ans:"had been working", why:"Duración (for three hours) hasta un momento pasado (when she found)."},
+ {t:"fut-perf", type:"choose", q:"By the time you read this letter, I ___ the country.", opts:["will leave","will have left","am leaving","leave"], ans:"will have left", why:"by the time + algo ya terminado en ese momento futuro."},
+ {t:"fut-cont", type:"choose", q:"This time next week we ___ on a beach in Cartagena.", opts:["will lie","will be lying","will have lain","lie"], ans:"will be lying", why:"Acción en progreso en un momento futuro."},
+ {t:"pres-perf", type:"choose", q:"I ___ this book three times. It's my favorite.", opts:["read","have read","have been reading","had read"], ans:"have read", why:"Experiencia y cantidad (three times), sin fecha: presente perfecto simple."},
+ {t:"pres-perf-cont", type:"choose", q:"How long ___ English?", opts:["are you studying","have you been studying","do you study","did you study"], ans:"have you been studying", why:"How long + una actividad que sigue: presente perfecto continuo."},
+ {t:"pres-perf", type:"choose", q:"I ___ him since we were at school.", opts:["know","have known","have been knowing","knew"], ans:"have known", why:"know es de estado: perfecto simple, nunca continuo."},
+ {t:"pres-fut", type:"fill", q:"I'll call you as soon as I ___ (get) home.", ans:["get"], why:"Después de as soon as se usa presente, aunque hables del futuro."},
+ {t:"pres-perf", type:"fill", q:"She ___ (not / see) her brother since Christmas.", ans:["hasn't seen","has not seen"], why:"since + algo que sigue sin pasar: presente perfecto."},
+ {t:"past-cont", type:"choose", q:"While I ___ dinner, I cut my finger.", opts:["was making","made","had made","am making"], ans:"was making", why:"Acción de fondo en progreso (while) interrumpida por una corta."},
+ {t:"used-to", type:"choose", q:"When we were kids, we ___ a dog called Toby.", opts:["would have","used to have","were having","have had"], ans:"used to have", why:"have es un estado: used to sí, would no."},
+ {t:"fut-past", type:"choose", q:"I ___ call you yesterday, but my phone died.", opts:["was going to","will","am going to","would have"], ans:"was going to", why:"Un plan del pasado que no se cumplió."},
+ {t:"pres-simple", type:"choose", q:"According to the schedule, the meeting ___ at 9:00 tomorrow.", opts:["starts","has started","started","had started"], ans:"starts", why:"Horario oficial: presente simple con valor de futuro."},
+ {t:"pres-perf-cont", type:"choose", q:"Why are you so out of breath? — I ___.", opts:["have run","have been running","ran","had run"], ans:"have been running", why:"Actividad reciente que deja huella visible."},
+ {t:"fut-past", type:"choose", q:"He said he ___ the report by Monday.", opts:["will finish","would finish","finishes","has finished"], ans:"would finish", why:"Estilo indirecto en pasado: will pasa a would."},
+ {t:"pres-cont", type:"choose", q:"You ___ your keys! That's the third time this week!", opts:["are always losing","always lose","have always lost","always lost"], ans:"are always losing", why:"Queja por algo que molesta y se repite: always + continuo."},
+ {t:"used-to", type:"choose", q:"I'm not used to ___ on the left.", opts:["drive","driving","drove","have driven"], ans:"driving", why:"be used to + -ing = estar acostumbrado."},
+ {t:"fut-perf-cont", type:"choose", q:"By the end of this year, she ___ here for a decade.", opts:["will work","will have been working","is working","has worked"], ans:"will have been working", why:"Duración (for a decade) hasta un momento futuro (by the end of this year)."},
+ {t:"past-perf", type:"fill", q:"I ___ (never / try) sushi before I went to Japan last year.", ans:["had never tried","'d never tried"], why:"Experiencia anterior a otro momento pasado: pasado perfecto."},
+ {t:"pres-perf-cont", type:"choose", q:"Sorry I'm late. ___ long?", opts:["Have you been waiting","Did you wait","Are you waiting","Had you waited"], ans:"Have you been waiting", why:"La espera empezó antes y sigue hasta ahora."},
+ {t:"past-simple", type:"choose", q:"Shakespeare ___ more than 30 plays.", opts:["has written","wrote","had written","was writing"], ans:"wrote", why:"Su vida terminó: es un periodo cerrado, así que va pasado simple."},
+ {t:"pres-perf", type:"choose", q:"I ___ to the gym three times this week, and it's only Wednesday.", opts:["went","have been","had been","was going"], ans:"have been", why:"this week aún no ha terminado: presente perfecto."},
+ {t:"fut-cont", type:"fill", q:"This time tomorrow, I ___ (fly) to Lima.", ans:["will be flying","'ll be flying"], why:"En progreso en un momento futuro: futuro continuo."},
+ {t:"pres-fut", type:"choose", q:"If it ___ tomorrow, we'll cancel the trip.", opts:["rains","will rain","is raining","rained"], ans:"rains", why:"Después de if se usa presente para el futuro."},
+ {t:"past-perf-cont", type:"choose", q:"She was exhausted because she ___ all night.", opts:["had been studying","has been studying","studied","was studying"], ans:"had been studying", why:"Causa (actividad prolongada) de una situación pasada."},
+ {t:"past-simple", type:"choose", q:"¿Cuál de estas oraciones es correcta?", opts:["I've seen that film last week.","I saw that film last week.","I've been seeing that film last week.","I had seen that film last week."], ans:"I saw that film last week.", why:"last week es un momento terminado: pasado simple."},
+ {t:"pres-simple", type:"choose", q:"¿Cuál de estas oraciones es correcta?", opts:["I'm knowing the answer.","I know the answer.","I've been knowing the answer.","I was knowing the answer."], ans:"I know the answer.", why:"know es de estado: no va en continuo."},
+ {t:"pres-fut", type:"choose", q:"¿Cuál de estas oraciones es correcta?", opts:["When I will finish, I'll call you.","When I finish, I'll call you.","When I'll finish, I call you.","When I finished, I'll call you."], ans:"When I finish, I'll call you.", why:"Después de when, presente; en la otra parte, will."},
+ {t:"pres-cont", type:"fill", q:"Look! The bus ___ (come). Run!", ans:["is coming","'s coming"], why:"Está pasando ahora mismo (Look!): presente continuo."},
+ {t:"past-perf", type:"choose", q:"By the time we got to the cinema, the film ___.", opts:["had already started","has already started","already starts","will already start"], ans:"had already started", why:"by the time + pasado: lo anterior va en pasado perfecto."},
+ {t:"fut-cont", type:"choose", q:"Don't call me at 8. I ___ the kids to bed then.", opts:["'ll be putting","'ll have put","put","'ve put"], ans:"'ll be putting", why:"A esa hora la acción estará en progreso."},
+ {t:"used-to", type:"fill", q:"Did you ___ (use) to play an instrument?", ans:["use"], why:"Después de did va use, sin -d: Did you use to…?"},
+ {t:"pres-perf", type:"choose", q:"She ___ in three different countries, and now she's moving to a fourth.", opts:["has lived","lived","had lived","lives"], ans:"has lived", why:"Experiencia acumulada hasta hoy."},
+ {t:"pres-cont", type:"choose", q:"I ___ the exam next Tuesday. I've already booked it.", opts:["am taking","take","will have taken","have taken"], ans:"am taking", why:"Plan ya acordado, con fecha: presente continuo."},
+ {t:"pres-perf-cont", type:"choose", q:"It ___ for days. The streets are flooded.", opts:["has been raining","rained","is raining","had rained"], ans:"has been raining", why:"Actividad larga que llega hasta ahora y deja resultado visible."},
+ {t:"past-cont", type:"choose", q:"We ___ dinner when the lights went out.", opts:["were having","had","have had","are having"], ans:"were having", why:"Acción de fondo interrumpida por otra corta."},
+ {t:"fut-perf", type:"fill", q:"By next month, I ___ (save) enough money for the trip.", ans:["will have saved","'ll have saved"], why:"by + algo terminado antes de ese momento: futuro perfecto."}
+];
+
+
+const GC = {presente:"--c-pres", pasado:"--c-past", futuro:"--c-fut", extra:"--c-extra"};
+const TBY = Object.fromEntries(T.map(t=>[t.id,t]));
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+function norm(s){return s.toLowerCase().replace(/[’`]/g,"'").replace(/\s+/g," ").trim()}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a}
+function load(){try{return JSON.parse(localStorage.getItem("tiempos-stats")||"{}")}catch(e){return {}}}
+function save(s){try{localStorage.setItem("tiempos-stats",JSON.stringify(s))}catch(e){}}
+
+const VIEWS = {
+ aprender:{tab:"Aprender", lede:"Los 12 tiempos y las otras formas de futuro y pasado. Para cada uno: fórmula, cuándo se usa, palabras que lo delatan, cómo descartarlo y el error más común.", render:renderLearn},
+ comparar:{tab:"Los que se confunden", lede:"Para cada par, una pregunta que te dice cuál descartar.", render:renderPairs},
+ practicar:{tab:"Practicar", lede:`${EX.length} ejercicios difíciles con corrección y explicación. Tus errores quedan guardados para repasarlos.`, render:renderPracHome}
+};
+
+function renderLearn(){
+  const map = `<div class="box tblwrap"><table><tr><th></th>${ASPECTS.map(a=>`<th>${a[0]}<small>${a[1]}</small></th>`).join("")}</tr>
+    <tr><th style="color:var(--c-pres)">Presente</th><td class="mono">I work</td><td class="mono">I'm working</td><td class="mono">I've worked</td><td class="mono">I've been working</td></tr>
+    <tr><th style="color:var(--c-past)">Pasado</th><td class="mono">I worked</td><td class="mono">I was working</td><td class="mono">I'd worked</td><td class="mono">I'd been working</td></tr>
+    <tr><th style="color:var(--c-fut)">Futuro</th><td class="mono">I'll work</td><td class="mono">I'll be working</td><td class="mono">I'll have worked</td><td class="mono">I'll have been working</td></tr></table></div>`;
+  const dec = `<div class="box tblwrap"><table><tr><th>Si ves…</th><th>es…</th></tr>${DECODER.map(([a,b])=>`<tr><td class="mono">${esc(a)}</td><td>${esc(b)}</td></tr>`).join("")}</table></div>`;
+  const st = `<div class="box"><p style="margin:0 0 10px">Expresan lo que piensas, sientes o tienes. <b>Nunca van en continuo:</b> <span class="mono">I know</span>, no <span class="mono" style="text-decoration:line-through">I'm knowing</span>.</p><div class="pills">${STATIVE.map(v=>`<span class="pill">${v}</span>`).join("")}</div></div>`;
+  const jump = `<div class="jump">${T.map(t=>`<a href="#t-${t.id}" style="--c:var(${GC[t.grp]})" data-scroll="t-${t.id}">${esc(t.en)}</a>`).join("")}</div>`;
+  const groups = Object.entries(GRUPOS).map(([g,info])=>`<div class="section"><h2>${esc(info.name)}</h2><div class="tenses">${T.filter(t=>t.grp===g).map(tenseCard).join("")}</div></div>`).join("");
+  return `<div class="section"><h2>El mapa: 3 momentos × 4 formas de ver la acción</h2>${map}</div>
+    <div class="section two" style="align-items:start"><div style="display:flex;flex-direction:column;gap:12px"><h2 style="font-size:1.6rem">Cómo identificarlo: mira los auxiliares</h2>${dec}</div><div style="display:flex;flex-direction:column;gap:12px"><h2 style="font-size:1.6rem">Regla de oro: verbos de estado</h2>${st}</div></div>
+    <div class="section"><h2>Ir a un tiempo</h2>${jump}</div>${groups}`;
+}
+function tenseCard(t){
+  return `<article class="tense" id="t-${t.id}" style="--c:var(${GC[t.grp]})">
+    <header><div><h3>${esc(t.en)}</h3><span class="es">${esc(t.es)}</span></div><span class="tag">${esc(t.asp)}</span></header>
+    <div class="formula"><b>${esc(t.rule)}</b><span>+ ${esc(t.form.pos)}</span><span>− ${esc(t.form.neg)}</span><span>? ${esc(t.form.q)}</span></div>
+    <div><p class="lbl">Cuándo se usa</p><ul>${t.uses.map(u=>`<li>${esc(u)}</li>`).join("")}</ul></div>
+    <div><p class="lbl">Ejemplos</p><ul>${t.ex.map(x=>`<li class="ex">${esc(x)}</li>`).join("")}</ul></div>
+    <div><p class="lbl">Palabras que lo delatan</p><div class="pills">${t.signals.map(s=>`<span class="pill">${esc(s)}</span>`).join("")}</div></div>
+    <div><p class="lbl">Cómo descartarlo</p><ul>${t.discard.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+    <div class="err"><p class="bad">${esc(t.mistake.bad)}</p><p class="good">${esc(t.mistake.good)}</p><p class="why">${esc(t.mistake.why)}</p></div>
+  </article>`;
+}
+function renderPairs(){
+  return `<div class="section"><div class="tenses">${PAIRS.map(p=>`<article class="box pair"><h3>${esc(p.a)} <span class="vs">vs</span> ${esc(p.b)}</h3><p style="margin:0">${esc(p.test)}</p><div class="exs"><span>${esc(p.ea)}</span><span>${esc(p.eb)}</span></div></article>`).join("")}</div></div>`;
+}
+
+// ---------- Practicar ----------
+let P = {filter:"todos", set:null, i:0, right:0, miss:[], answered:false};
+function pool(filter){
+  const st=load();
+  return EX.map((e,i)=>({...e,i})).filter(e=>{
+    if(filter==="errores") return st[e.i]===0;
+    if(filter==="todos") return true;
+    return TBY[e.t].grp===filter;
+  });
+}
+function renderPracHome(){
+  const st=load(), errs=EX.filter((e,i)=>st[i]===0).length, done=Object.keys(st).length, ok=Object.values(st).filter(v=>v===1).length;
+  const f=[["todos",`Todos (${EX.length})`],["presente","Presente"],["pasado","Pasado"],["futuro","Futuro"],["extra","Otras formas"],["errores",`Mis errores (${errs})`]];
+  return `<div class="prac"><div class="box setup">
+    <p style="margin:0">Has respondido ${done} de ${EX.length} ejercicios; ${ok} bien la última vez.</p>
+    <p class="lbl" style="--c:var(--muted)" id="setLbl">Qué practicar</p>
+    <div class="row" role="group" aria-labelledby="setLbl">${f.map(([k,l])=>`<button type="button" class="choice" data-filter="${k}" aria-pressed="${P.filter===k}">${l}</button>`).join("")}</div>
+    <button type="button" class="big-btn" id="pStart">Empezar</button>
+  </div></div>`;
+}
+function pStart(){
+  const s=shuffle(pool(P.filter));
+  if(!s.length){ document.getElementById("pStart").insertAdjacentHTML("afterend",`<p style="margin:0;color:var(--muted)">No hay ejercicios en esa opción todavía. Elige otra.</p>`); return; }
+  P.set=s; P.i=0; P.right=0; P.miss=[]; pQ();
+}
+function pQ(){
+  const e=P.set[P.i]; P.answered=false;
+  const long = e.type==="choose" && e.opts.some(o=>o.length>22);
+  const body = e.type==="fill"
+    ? `<form class="typein" id="pForm" autocomplete="off"><label for="pIn" class="sr">Tu respuesta</label><input id="pIn" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Escribe la forma correcta"><button type="submit">Comprobar</button></form>`
+    : `<div class="opts${long?" long":""}">${shuffle(e.opts).map(o=>`<button type="button" data-opt="${esc(o)}">${esc(o)}</button>`).join("")}</div>`;
+  document.getElementById("view").innerHTML=`<div class="prac">
+    <div class="prog" aria-label="Pregunta ${P.i+1} de ${P.set.length}"><i style="width:${P.i/P.set.length*100}%"></i></div>
+    <div class="box" style="display:flex;flex-direction:column;gap:14px"><span class="qkind">${P.i+1} / ${P.set.length} · ${e.type==="fill"?"Completa":"Elige"}</span><p class="qtext">${esc(e.q)}</p>${body}<div id="pFb"></div></div></div>`;
+  const inp=document.getElementById("pIn"); if(inp) inp.focus();
+}
+function pCheck(given, btn){
+  if(P.answered) return; P.answered=true;
+  const e=P.set[P.i];
+  const ok = e.type==="fill" ? e.ans.map(norm).includes(norm(given)) : given===e.ans;
+  const st=load(); st[e.i]=ok?1:0; save(st);
+  if(ok) P.right++; else P.miss.push(e);
+  document.querySelectorAll(".opts button").forEach(x=>{x.disabled=true; if(x.dataset.opt===e.ans) x.classList.add("right");});
+  if(btn && !ok) btn.classList.add("wrong");
+  const inp=document.getElementById("pIn"); if(inp) inp.disabled=true;
+  const answer = e.type==="fill" ? e.ans[0] : e.ans;
+  const t=TBY[e.t];
+  document.getElementById("pFb").innerHTML=`<div class="fb ${ok?"ok":"bad"}">
+    <p><b>${ok?"¡Correcto!":"La respuesta es: "+esc(answer)}</b></p>
+    <p>${esc(e.why)}</p>
+    <div class="row"><a href="#t-${t.id}" data-learn="${t.id}">Repasar: ${esc(t.en)}</a><button type="button" id="pNext">${P.i+1<P.set.length?"Continuar":"Ver resultado"}</button></div></div>`;
+  document.getElementById("pNext").focus();
+}
+function pEnd(){
+  const n=P.set.length, r=P.right;
+  const msg = r===n?"¡Perfecto!":r>=n*0.7?"¡Muy bien!":r>=n*0.4?"Vas bien. Repasa los que fallaste.":"Repasa los tiempos de abajo y vuelve a intentarlo.";
+  document.getElementById("view").innerHTML=`<div class="prac"><div class="prog"><i style="width:100%"></i></div>
+    <div class="box" style="display:flex;flex-direction:column;gap:14px"><span class="score">${r}/${n}</span><p style="margin:0;font-weight:700;font-size:1.15rem">${msg}</p>
+    ${P.miss.length?`<div><p class="lbl" style="--c:var(--muted)">Para repasar</p><ul class="miss">${P.miss.map(e=>`<li><span class="mono">${esc(e.q)}</span> → <b>${esc(e.type==="fill"?e.ans[0]:e.ans)}</b><br><span style="color:var(--muted)">${esc(e.why)}</span></li>`).join("")}</ul></div>`:""}
+    <button type="button" class="big-btn alt" id="pHome">Volver</button></div></div>`;
+}
+
+let view="aprender";
+function setView(v){
+  view = VIEWS[v] ? v : "aprender";
+  document.getElementById("lede").textContent=VIEWS[view].lede;
+  document.getElementById("tabs").innerHTML=Object.entries(VIEWS).map(([k,x])=>`<a href="#${k}"${k===view?' aria-current="page"':""}>${x.tab}</a>`).join("");
+  document.getElementById("view").innerHTML=VIEWS[view].render();
+}
+function goTense(id){
+  if(view!=="aprender") setView("aprender");
+  const el=document.getElementById("t-"+id);
+  if(el) el.scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});
+}
+document.addEventListener("click",e=>{
+  const sc=e.target.closest("[data-scroll]"); if(sc){ e.preventDefault(); return goTense(sc.dataset.scroll.slice(2)); }
+  const lr=e.target.closest("[data-learn]"); if(lr){ e.preventDefault(); history.replaceState(null,"","#aprender"); return goTense(lr.dataset.learn); }
+  const f=e.target.closest("[data-filter]"); if(f){ P.filter=f.dataset.filter; document.querySelectorAll("[data-filter]").forEach(x=>x.setAttribute("aria-pressed",x===f)); return; }
+  if(e.target.closest("#pStart")) return pStart();
+  const o=e.target.closest("[data-opt]"); if(o) return pCheck(o.dataset.opt,o);
+  if(e.target.closest("#pNext")){ P.i++; return P.i<P.set.length?pQ():pEnd(); }
+  if(e.target.closest("#pHome")) return setView("practicar");
+});
+document.addEventListener("submit",e=>{ if(e.target.id==="pForm"){ e.preventDefault(); pCheck(document.getElementById("pIn").value); } });
+window.addEventListener("hashchange",()=>{ const h=location.hash.slice(1); if(VIEWS[h]) setView(h); });
+setView(location.hash.slice(1));
+if ("serviceWorker" in navigator) { window.addEventListener("load", () => { navigator.serviceWorker.register("sw.js").catch(()=>{}); }); }
+</script>
+</body>
+</html>
