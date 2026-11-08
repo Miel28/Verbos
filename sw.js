@@ -1,5 +1,5 @@
-const CACHE = "verbos-v4";
-const FILES = ["./", "./index.html", "./tiempos.html", "./manifest.webmanifest", "./apple-touch-icon.png", "./icon-192.png", "./icon-512.png"];
+const CACHE = "verbos-v5";
+const FILES = ["./", "./index.html", "./tiempos.html", "./cuaderno.html", "./manifest.webmanifest", "./apple-touch-icon.png", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
